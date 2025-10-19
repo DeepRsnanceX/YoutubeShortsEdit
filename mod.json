@@ -1,0 +1,27 @@
+{
+	"geode": "4.9.0",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"resources": {
+		"spritesheets": {
+			"ShortsEditSheet": [
+				"resources/EditSheet/*.png"
+			]
+		},
+		"files": [
+			"resources/phonk/*.ogg"
+		]
+	},
+	"id": "saritahhh.youtubeshortsedit",
+	"name": "YoutubeShortsEdit",
+	"version": "v1.0.0",
+	"developer": "Saritahhh",
+	"description": ":skull:",
+	"dependencies": {
+		"geode.node-ids": ">=v1.20.0"
+	}
+}
