@@ -6,6 +6,66 @@
 		"mac": "2.2074",
 		"ios": "2.2074"
 	},
+	"settings": {
+		"edit-rarity": {
+			"type": "int",
+			"name": "Rarity",
+			"description": "How rare the edit effect is on every click. AKA, the chance of it appearing.\n- Lower rarity: Higher chance of it appearing.\n- Higher rarity: Lower chance of it appearing.",
+			"default": 50,
+			"min": 0,
+			"max": 100,
+			"control": {
+				"input": true,
+				"slider": true,
+				"slider-step": 1,
+				"arrows": true,
+				"arrow-step": 1,
+				"big-arrows": true,
+				"big-arrow-step": 5
+			}
+		},
+		"only-after": {
+			"type": "int",
+			"name": "Only After %",
+			"description": "Controls after what percentage can the edit start happening. \nTIP: If you want the effect to only happen at ur last click/at the end of the level, set this to a higher value like 98% and set rarity to 0.",
+			"default": 0,
+			"min": 0,
+			"max": 100,
+			"control": {
+				"input": true,
+				"slider": true,
+				"slider-step": 1,
+				"arrows": true,
+				"arrow-step": 1,
+				"big-arrows": true,
+				"big-arrow-step": 5
+			}
+		},
+		"mod-mode": {
+			"type": "string",
+			"name": "Trigger Mode",
+			"description": "Controls when is the mod's effect triggered. \n- On Click: Triggers the effect right as you click. \n- On Release: Triggers the effect right as you let go of your click.",
+			"default": "On Click",
+			"one-of": ["On Click", "On Release"]
+		},
+		"action-delay": {
+			"type": "float",
+			"name": "Action Delay",
+			"description": "Controls the delay between your chosen action and when the edit effect will happen. Setting it to 0.5 will wait for 0.5 seconds after you click/release before showing the effect.\nNo, you cannot currently configure how much the edit effect lasts.",
+			"default": 0.0,
+			"min": 0,
+			"max": 120,
+			"control": {
+				"input": true,
+				"slider": true,
+				"slider-step": 1.0,
+				"arrows": true,
+				"arrow-step": 0.1,
+				"big-arrows": true,
+				"big-arrow-step": 0.5
+			}
+		}
+	},
 	"resources": {
 		"spritesheets": {
 			"ShortsEditSheet": [
@@ -21,6 +81,10 @@
 	"version": "v1.0.0",
 	"developer": "Saritahhh",
 	"description": ":skull:",
+	"tags": ["modtober25", "joke", "gameplay"],
+	"links": {
+		"source": "https://github.com/DeepRsnanceX/YoutubeShortsEdit"
+	},
 	"dependencies": {
 		"geode.node-ids": ">=v1.20.0"
 	}

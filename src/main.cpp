@@ -52,7 +52,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 
 		vign->setVisible(true);
 		yeah->setVisible(true);
-		std::string frameName = fmt::format("editImg_{}.png"_spr, getRandInt(1, 6));
+		std::string frameName = fmt::format("editImg_{}.png"_spr, getRandInt(1, 14));
 		auto frame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(frameName.c_str());
 		if (frame) yeah->setDisplayFrame(frame);
 
@@ -68,11 +68,42 @@ class $modify(ShortsEditPO, PlayerObject) {
 		
 		if (pausedByMod) return true;
 		if (gonnaPause) return true;
+
+		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Click") return true;
 		
+		int percent = playLayer->getCurrentPercentInt();
 		int chance = getRandInt(0, 100);
-		if (chance >= 50) {
-			gonnaPause = true;
-			this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), 0.1f);
+		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
+			if (percent >= Mod::get()->getSettingValue<int64_t>("only-after")) {
+				gonnaPause = true;
+				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
+			}
+			
+		}
+
+		return true;
+	}
+
+	bool releaseButton(PlayerButton p0) {
+		if (!PlayerObject::releaseButton(p0)) return false;
+		
+		auto playLayer = PlayLayer::get();
+		if (!playLayer) return true;
+
+		if (pausedByMod) return true;
+		if (gonnaPause) return true;
+
+		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") return true;
+
+		int percent = playLayer->getCurrentPercentInt();
+		int chance = getRandInt(0, 100);
+
+		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
+			if (percent >= Mod::get()->getSettingValue<int64_t>("only-after")) {
+				gonnaPause = true;
+				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
+			}
+			
 		}
 
 		return true;
@@ -103,11 +134,10 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return;
-
-		this->setVisible(!pausedByMod);
 		
 		if (pausedByMod) {
-			std::string phonkSound = fmt::format("phonk_{}.ogg"_spr, getRandInt(1, 4));
+			this->setPositionY(3000.f);
+			std::string phonkSound = fmt::format("phonk_{}.ogg"_spr, getRandInt(1, 21));
 			
 			auto fmod = FMODAudioEngine::sharedEngine();
 
