@@ -14,6 +14,7 @@ int getRandInt(int min, int max) {
 
 bool pausedByMod = false;
 bool gonnaPause = false;
+bool isReleaseValid = false;
 
 class $modify(ShortsEditPL, PlayLayer) {
 	struct Fields {
@@ -39,6 +40,7 @@ class $modify(ShortsEditPL, PlayLayer) {
 
 		pausedByMod = false;
 		gonnaPause = false;
+		isReleaseValid = true;
 		auto fields = m_fields.self();
 		auto winSize = CCDirector::sharedDirector()->getWinSize();
 
@@ -104,6 +106,11 @@ class $modify(ShortsEditPO, PlayerObject) {
 		playLayer->m_uiLayer->m_pauseBtn->activate();
 	}
 
+	void updateReleaseValid(float dt) {
+        isReleaseValid = true;
+        this->unschedule(schedule_selector(ShortsEditPO::updateReleaseValid));
+    }
+
 	bool isButtonEnabled(PlayerButton btn) {
 		switch(static_cast<int>(btn)) {
 			case 1: return Mod::get()->getSettingValue<bool>("allow-jumpbtn");
@@ -118,8 +125,8 @@ class $modify(ShortsEditPO, PlayerObject) {
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
-		
-		if (pausedByMod || gonnaPause) return true;
+		if (pausedByMod) return true;
+		if (gonnaPause) return true;
 
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Click") return true;
 
@@ -143,8 +150,9 @@ class $modify(ShortsEditPO, PlayerObject) {
 		
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
-
-		if (pausedByMod || gonnaPause) return true;
+		if (pausedByMod) return true;
+		if (gonnaPause) return true;
+		if (!isReleaseValid) return true;
 
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") return true;
 
@@ -167,9 +175,11 @@ class $modify(ShortsEditPO, PlayerObject) {
 
 class $modify(ShortsEditPauseLayer, PauseLayer) {
 	void okayDude(float dt) {
-		PauseLayer::onResume(nullptr);
 		pausedByMod = false;
 		gonnaPause = false;
+		isReleaseValid = false;
+
+		PauseLayer::onResume(nullptr);
 
 		auto pl = PlayLayer::get();
 		if (!pl) return;
@@ -183,6 +193,11 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 		if (lmao) lmao->setVisible(false);
 		if (vign) vign->setVisible(false);
 		if (plFields->grayscreen) plFields->grayscreen->setVisible(false);
+
+		auto player = pl->m_player1;
+        if (player) {
+            static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), 0.5f);
+        }
 	}
 
 	void customSetup() {
