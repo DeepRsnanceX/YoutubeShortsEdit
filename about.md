@@ -1,3 +1,1 @@
-# Template Mod
-
-Edit about.md to change this
+# Sigma Phonk Edit Mode

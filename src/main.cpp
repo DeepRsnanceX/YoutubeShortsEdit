@@ -16,18 +16,47 @@ bool pausedByMod = false;
 bool gonnaPause = false;
 
 class $modify(ShortsEditPL, PlayLayer) {
+	struct Fields {
+		Ref<CCRenderTexture> plRenderer = nullptr;
+		CCSpriteGrayscale* grayscreen = nullptr;
+	};
+
+	CCTexture2D* renderPL() {
+		auto fields = m_fields.self();
+		if (!fields->plRenderer) return nullptr;
+
+		if (fields->grayscreen) fields->grayscreen->setVisible(false);
+
+		fields->plRenderer->beginWithClear(0, 0, 0, 0);
+		this->visit();
+		fields->plRenderer->end();
+
+		return fields->plRenderer->getSprite()->getTexture();
+	}
+
 	void setupHasCompleted() {
 		PlayLayer::setupHasCompleted();
 
 		pausedByMod = false;
 		gonnaPause = false;
-
+		auto fields = m_fields.self();
 		auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+		fields->plRenderer = CCRenderTexture::create(winSize.width, winSize.height);
+
+		fields->grayscreen = CCSpriteGrayscale::createWithTexture(renderPL());
+		fields->grayscreen->setAnchorPoint({0.f, 0.f});
+		fields->grayscreen->setPosition({0.f, 0.f});
+		fields->grayscreen->setFlipY(true);
+		fields->grayscreen->setID("grayscale-screenshot"_spr);
+		fields->grayscreen->setVisible(false);
+		this->addChild(fields->grayscreen, 10000);
+
 		auto spr = CCSprite::createWithSpriteFrameName("editImg_1.png"_spr);
 		spr->setPosition({winSize.width / 2.f, 40.f});
 		spr->setVisible(false);
 		spr->setID("no-description-needed"_spr);
-		this->addChild(spr, 1000);
+		this->addChild(spr, 10001);
 
 		auto vignetteSpr = CCSprite::createWithSpriteFrameName("vignette.png"_spr);
 		vignetteSpr->setPosition({winSize.width / 2.f, winSize.height / 2.f});
@@ -35,7 +64,7 @@ class $modify(ShortsEditPL, PlayLayer) {
 		vignetteSpr->setScaleY(winSize.height / vignetteSpr->getContentSize().height);
 		vignetteSpr->setID("edit-vignette"_spr);
 		vignetteSpr->setVisible(false);
-		this->addChild(vignetteSpr, 1001);
+		this->addChild(vignetteSpr, 10002);
 	}
 };
 
@@ -44,14 +73,29 @@ class $modify(ShortsEditPO, PlayerObject) {
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return;
 
+		auto plFields = static_cast<ShortsEditPL*>(playLayer)->m_fields.self();
+		if (!plFields) return;
+
 		auto yeah = static_cast<CCSprite*>(playLayer->getChildByID("no-description-needed"_spr));
 		if (!yeah) return;
 
 		auto vign = playLayer->getChildByID("edit-vignette"_spr);
 		if (!vign) return;
 
+		if (!plFields->grayscreen) return;
+
+		if (plFields->grayscreen && plFields->plRenderer) {
+			auto rendered = static_cast<ShortsEditPL*>(playLayer)->renderPL();
+			if (rendered) {
+				plFields->grayscreen->setTexture(rendered);
+				plFields->grayscreen->setTextureRect(CCRect(0, 0, rendered->getContentSize().width, rendered->getContentSize().height));
+			}
+		}
+		
 		vign->setVisible(true);
 		yeah->setVisible(true);
+		plFields->grayscreen->setVisible(true);
+
 		std::string frameName = fmt::format("editImg_{}.png"_spr, getRandInt(1, 14));
 		auto frame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(frameName.c_str());
 		if (frame) yeah->setDisplayFrame(frame);
@@ -119,14 +163,15 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 		auto pl = PlayLayer::get();
 		if (!pl) return;
 
+		auto plFields = static_cast<ShortsEditPL*>(pl)->m_fields.self();
+		if (!plFields) return;
+
 		auto lmao = pl->getChildByID("no-description-needed"_spr);
-		if (!lmao) return;
-
 		auto vign = pl->getChildByID("edit-vignette"_spr);
-		if (!vign) return;
 
-		lmao->setVisible(false);
-		vign->setVisible(false);
+		if (lmao) lmao->setVisible(false);
+		if (vign) vign->setVisible(false);
+		if (plFields->grayscreen) plFields->grayscreen->setVisible(false);
 	}
 
 	void customSetup() {
