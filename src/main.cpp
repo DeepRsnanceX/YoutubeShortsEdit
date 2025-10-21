@@ -109,6 +109,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 			case 1: return Mod::get()->getSettingValue<bool>("allow-jumpbtn");
 			case 2: return Mod::get()->getSettingValue<bool>("allow-leftbtn");
 			case 3: return Mod::get()->getSettingValue<bool>("allow-rightbtn");
+			default: return false;
 		}
 	}
 
