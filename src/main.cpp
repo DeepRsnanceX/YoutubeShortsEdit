@@ -104,16 +104,25 @@ class $modify(ShortsEditPO, PlayerObject) {
 		playLayer->m_uiLayer->m_pauseBtn->activate();
 	}
 
+	bool isButtonEnabled(PlayerButton btn) {
+		switch(static_cast<int>(btn)) {
+			case 1: return Mod::get()->getSettingValue<bool>("allow-jumpbtn");
+			case 2: return Mod::get()->getSettingValue<bool>("allow-leftbtn");
+			case 3: return Mod::get()->getSettingValue<bool>("allow-rightbtn");
+		}
+	}
+
 	bool pushButton(PlayerButton p0) {
 		if (!PlayerObject::pushButton(p0)) return false;
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
 		
-		if (pausedByMod) return true;
-		if (gonnaPause) return true;
+		if (pausedByMod || gonnaPause) return true;
 
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Click") return true;
+
+		if (!isButtonEnabled(p0)) return true;
 		
 		int percent = playLayer->getCurrentPercentInt();
 		int chance = getRandInt(0, 100);
@@ -134,10 +143,11 @@ class $modify(ShortsEditPO, PlayerObject) {
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
 
-		if (pausedByMod) return true;
-		if (gonnaPause) return true;
+		if (pausedByMod || gonnaPause) return true;
 
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") return true;
+
+		if (!isButtonEnabled(p0)) return true;
 
 		int percent = playLayer->getCurrentPercentInt();
 		int chance = getRandInt(0, 100);
@@ -191,5 +201,15 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 
 			this->scheduleOnce(schedule_selector(ShortsEditPauseLayer::okayDude), 1.5f);
 		}
+	}
+
+	void onResume(CCObject* sender) {
+		if (!pausedByMod) PauseLayer::onResume(sender);
+	}
+	void onQuit(CCObject* sender) {
+		if (!pausedByMod) PauseLayer::onQuit(sender);
+	}
+	void tryQuit(CCObject* sender) {
+		if (!pausedByMod) PauseLayer::tryQuit(sender);
 	}
 };

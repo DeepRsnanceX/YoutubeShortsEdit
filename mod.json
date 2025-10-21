@@ -64,6 +64,29 @@
 				"big-arrows": true,
 				"big-arrow-step": 0.5
 			}
+		},
+		"input-title": {
+			"type": "title",
+			"name": "Input Settings",
+			"description": "Settings to control which inputs activate the effect."
+		},
+		"allow-jumpbtn": {
+			"type": "bool",
+			"name": "Jump Button/Action",
+			"description": "Counts the Jump Button/Action as one that can trigger the effect.",
+			"default": true
+		},
+		"allow-leftbtn": {
+			"type": "bool",
+			"name": "Left Button/Action",
+			"description": "Counts the Jump Button/Action as one that can trigger the effect.",
+			"default": true
+		},
+		"allow-rightbtn": {
+			"type": "bool",
+			"name": "Right Button/Action",
+			"description": "Counts the Jump Button/Action as one that can trigger the effect.",
+			"default": true
 		}
 	},
 	"resources": {

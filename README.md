@@ -1,23 +1,31 @@
-# YoutubeShortsEdit
-This is where she makes a mod.
-
+# Sigma Phonk Edit Mode
 <img src="logo.png" width="150" alt="the mod's logo" />
+Turn your skibidi Geometry Dash Gameplay into the most Sigma Phonk Edit and feel the rizz, or something! How do you do, fellow kids?
 
-*Update logo.png to change your mod's icon (please)*
+This mod makes it so any action *(configurable)* you make in-game has a *(configurable)* chance of flexing your raw skill by turning your gameplay into a based sigma phonk edit ready to be posted to your chad TikTok account!
+The mod has the following features:
 
-## Getting started
-We recommend heading over to [the getting started section on our docs](https://docs.geode-sdk.org/getting-started/) for useful info on what to do next.
+- **Configurable Chance:** Wanna make EVERY input turn into a banger Phonk Edit? Or do you want to be jumpscared by the 1% chance Skibidi Phonk of doom? Can do both!
+- **Configurable Min %:** Want a phonk edit only on the last few moments of a level? You can easily configure after which percent can the effect happen!
+- **Configurable Inputs:** Don't want the movement buttons in platformer to trigger your rizz? Disable them! Do you want your chad edit to happen On Click, or do you want it On Click Release so you can flex those sigma wave skills? Can do both!
 
-## Build instructions
-For more info, see [our docs](https://docs.geode-sdk.org/getting-started/create-mod#build)
-```sh
-# Assuming you have the Geode CLI set up already
-geode build
-```
-
-# Resources
-* [Geode SDK Documentation](https://docs.geode-sdk.org/)
-* [Geode SDK Source Code](https://github.com/geode-sdk/geode/)
-* [Geode CLI](https://github.com/geode-sdk/cli)
-* [Bindings](https://github.com/geode-sdk/bindings/)
-* [Dev Tools](https://github.com/geode-sdk/DevTools)
+# Credits
+## Idea
+Based on generic TikTok/Youtube Shorts Phonk edits.
+Inspired by a similar Minecraft mod by Ekically. [Original Tweet Here](https://x.com/Ekically/status/1979313933065555996)
+## Music
+- Hensonn - Sahara  
+- Kordhell - Live Another Day
+- ATLXS - PASSO BEM SOLTO (Slowed)
+- Spreen - Respeito
+- KSLV - Disaster
+- MUPP & Sadfriendd - Vendetta!
+- PlayaPhonk - Phonky Town
+- WEEDMANE x Suicideyear - SUICIDE YEAR
+- InterWorld - METAMORPHOSIS
+- Dxrk - RAVE
+- Kordhell - Murder in My Mind
+- DVRST - Close Eyes
+- 6ynthmane, RXDXVIL - BRAZILIAN DANCA PHONK
+- sma$her & MXZI - Acelerada
+- Nakama, Mc Staff, EP - DIA DELICIA
