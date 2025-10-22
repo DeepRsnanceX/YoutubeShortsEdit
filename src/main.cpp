@@ -4,6 +4,7 @@
 #include <random>
 
 using namespace geode::prelude;
+namespace fs = std::filesystem;
 
 int getRandInt(int min, int max) {
 	static std::random_device rd;
@@ -20,28 +21,100 @@ class $modify(ShortsEditPL, PlayLayer) {
 	struct Fields {
 		Ref<CCRenderTexture> plRenderer = nullptr;
 		CCSpriteGrayscale* grayscreen = nullptr;
+
+		std::vector<std::string> builtinImages;
+		std::vector<std::string> customImages;
+		std::vector<std::string> builtinSounds;
+		std::vector<std::string> customSounds;
 	};
 
 	void updateReleaseValidPL(float dt) {
 		isReleaseValid = true;
 		this->unschedule(schedule_selector(ShortsEditPL::updateReleaseValidPL));
 	}
-	/*
-	CCTexture2D* renderPL() {
+
+	void loadCustomAssets() {
 		auto fields = m_fields.self();
-		if (!fields->plRenderer) return nullptr;
-
-		if (fields->grayscreen) fields->grayscreen->setVisible(false);
-
-		fields->plRenderer->beginWithClear(0, 0, 0, 0);
-		this->visit();
-		fields->plRenderer->end();
-
-		return fields->plRenderer->getSprite()->getTexture();
+		
+		fields->customImages.clear();
+		fields->customSounds.clear();
+		
+		fields->builtinImages.clear();
+		for (int i = 1; i <= 14; i++) {
+			fields->builtinImages.push_back(fmt::format("editImg_{}.png"_spr, i));
+		}
+		
+		fields->builtinSounds.clear();
+		for (int i = 1; i <= 21; i++) {
+			fields->builtinSounds.push_back(fmt::format("phonk_{}.ogg"_spr, i));
+		}
+		
+		if (Mod::get()->getSettingValue<bool>("include-custom-images")) {
+			auto imagesDir = Mod::get()->getConfigDir(true) / "images";
+			
+			if (fs::exists(imagesDir) && fs::is_directory(imagesDir)) {
+				for (const auto& entry : fs::directory_iterator(imagesDir)) {
+					if (entry.is_regular_file()) {
+						auto ext = entry.path().extension().string();
+						if (ext == ".png") {
+							fields->customImages.push_back(entry.path().string());
+						}
+					}
+				}
+			}
+		}
+		
+		if (Mod::get()->getSettingValue<bool>("include-custom-sounds")) {
+			auto soundsDir = Mod::get()->getConfigDir(true) / "phonk";
+			
+			if (fs::exists(soundsDir) && fs::is_directory(soundsDir)) {
+				for (const auto& entry : fs::directory_iterator(soundsDir)) {
+					if (entry.is_regular_file()) {
+						auto ext = entry.path().extension().string();
+						if (ext == ".ogg" || ext == ".mp3" || ext == ".wav") {
+							fields->customSounds.push_back(entry.path().string());
+						}
+					}
+				}
+			}
+		}
 	}
-	*/
 
-	// credit to ery's grayscale mode mod
+	std::string getRandomImage() {
+		auto fields = m_fields.self();
+		std::vector<std::string> allImages;
+		
+		if (Mod::get()->getSettingValue<bool>("include-builtin-images")) {
+			allImages.insert(allImages.end(), fields->builtinImages.begin(), fields->builtinImages.end());
+		}
+		
+		if (Mod::get()->getSettingValue<bool>("include-custom-images")) {
+			allImages.insert(allImages.end(), fields->customImages.begin(), fields->customImages.end());
+		}
+		
+		if (allImages.empty()) return fields->builtinImages[0];
+		
+		return allImages[getRandInt(0, allImages.size() - 1)];
+	}
+
+	std::string getRandomSound() {
+		auto fields = m_fields.self();
+		std::vector<std::string> allSounds;
+		
+		if (Mod::get()->getSettingValue<bool>("include-builtin-sounds")) {
+			allSounds.insert(allSounds.end(), fields->builtinSounds.begin(), fields->builtinSounds.end());
+		}
+		
+		if (Mod::get()->getSettingValue<bool>("include-custom-sounds")) {
+			allSounds.insert(allSounds.end(), fields->customSounds.begin(), fields->customSounds.end());
+		}
+		
+		if (allSounds.empty()) return fields->builtinSounds[0];
+		
+		return allSounds[getRandInt(0, allSounds.size() - 1)];
+	}
+
+	// credit to ery's grayscale mode mod for this, fixes issues with shaders
 	CCTexture2D* renderPL() {
 		auto fields = m_fields.self();
 		if (!fields->plRenderer) return nullptr;
@@ -57,7 +130,6 @@ class $modify(ShortsEditPL, PlayLayer) {
 		float ogX = view->m_fScaleX;
 		float ogY = view->m_fScaleY;
 
-		//CCSize ogScale = { view->m_fScaleX, view->m_fScaleY };
 		CCSize size = { roundf(320.f * (winSize.width / winSize.height)), 320.f };
 		CCSize newScale = { winSize.width / size.width, winSize.height / size.height };
 		float scale = director->getContentScaleFactor() / utils::getDisplayFactor();
@@ -99,6 +171,8 @@ class $modify(ShortsEditPL, PlayLayer) {
 		isReleaseValid = true;
 		auto fields = m_fields.self();
 		auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+		ShortsEditPL::loadCustomAssets();
 
 		fields->plRenderer = CCRenderTexture::create(winSize.width, winSize.height);
 
@@ -154,9 +228,20 @@ class $modify(ShortsEditPO, PlayerObject) {
 		yeah->setVisible(true);
 		plFields->grayscreen->setVisible(true);
 
-		std::string frameName = fmt::format("editImg_{}.png"_spr, getRandInt(1, 14));
-		auto frame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(frameName.c_str());
-		if (frame) yeah->setDisplayFrame(frame);
+		std::string chosenImg = static_cast<ShortsEditPL*>(playLayer)->getRandomImage();
+		
+		if (chosenImg.find("editImg_") != std::string::npos) {
+			auto frame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(chosenImg.c_str());
+			if (frame) {
+				yeah->setDisplayFrame(frame);
+			}
+		} else {
+			auto texture = CCTextureCache::sharedTextureCache()->addImage(chosenImg.c_str(), false);
+			if (texture) {
+				yeah->setTexture(texture);
+				yeah->setTextureRect(CCRect(0, 0, texture->getContentSize().width, texture->getContentSize().height));
+			}
+		}
 
 		pausedByMod = true;
 		playLayer->m_uiLayer->m_pauseBtn->activate();
@@ -235,6 +320,8 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 		gonnaPause = false;
 		isReleaseValid = false;
 
+		FMODAudioEngine::sharedEngine()->stopAllEffects();
+
 		PauseLayer::onResume(nullptr);
 
 		auto pl = PlayLayer::get();
@@ -256,17 +343,19 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return;
+
+		auto plFields = static_cast<ShortsEditPL*>(playLayer)->m_fields.self();
+		if (!plFields) return;
 		
 		if (pausedByMod) {
 			this->setPositionY(3000.f);
-			std::string phonkSound = fmt::format("phonk_{}.ogg"_spr, getRandInt(1, 21));
+			std::string phonkSound = static_cast<ShortsEditPL*>(playLayer)->getRandomSound();
 			
 			auto fmod = FMODAudioEngine::sharedEngine();
-
 			fmod->resumeAllEffects();
 			fmod->playEffect(phonkSound.c_str());
 
-			this->scheduleOnce(schedule_selector(ShortsEditPauseLayer::okayDude), 1.5f);
+			this->scheduleOnce(schedule_selector(ShortsEditPauseLayer::okayDude), Mod::get()->getSettingValue<double>("effect-duration"));
 		}
 	}
 

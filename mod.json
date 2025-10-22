@@ -65,6 +65,52 @@
 				"big-arrow-step": 0.5
 			}
 		},
+		"effect-duration": {
+			"type": "float",
+			"name": "Effect Duration",
+			"description": "How long the edit effect (grayscale, image, sound) should last before automatically resuming. Maximum is 5 seconds.",
+			"default": 1.5,
+			"min": 0.1,
+			"max": 5.0,
+			"control": {
+				"input": true,
+				"slider": true,
+				"slider-step": 0.1,
+				"arrows": true,
+				"arrow-step": 0.1,
+				"big-arrows": true,
+				"big-arrow-step": 0.5
+			}
+		},
+		"assets-title": {
+			"type": "title",
+			"name": "Assets Manager",
+			"description": "Manages which assets to include in the mod. Enable/Disable the mod's own assets and your own as you please!"
+		},
+		"include-builtin-images": {
+			"type": "bool",
+			"name": "Include Built-in Images",
+			"description": "Enables/Disables showing the mod's built-in Images on the Edit Overlay.",
+			"default": true
+		},
+		"include-custom-images": {
+			"type": "bool",
+			"name": "Include Custom Images",
+			"description": "Enables/Disables showing your Custom Images on the Edit Overlay. \nTo add custom images, create a folder called 'images' in the Mod's config folder and place all your custom images there! \nTo access the mod's config folder, click the Folder button with a gear on it at the bottom right corner of this Popup. Only .png files are supported. \n\nPlease make sure your file names DON'T contain any special characters!!!",
+			"default": false
+		},
+		"include-builtin-sounds": {
+			"type": "bool",
+			"name": "Include Built-in Sounds",
+			"description": "Enables/Disables playing the mod's built-in Phonk SFXs when the Edit effect is active.",
+			"default": true
+		},
+		"include-custom-sounds": {
+			"type": "bool",
+			"name": "Include Custom Sounds",
+			"description": "Enables/Disables playing your Custom Music/SFXs when the Edit effect is active. \nTo add custom sounds, create a folder called 'phonk' in the Mod's config folder and place all your custom sounds there! \nTo access the mod's config folder, click the Folder button with a gear on it at the bottom right corner of this Popup. Supported file formats are: \n- .ogg \n- .mp3 \n- .wav \n\nPlease make sure your file names DON'T contain any special characters!!!",
+			"default": false
+		},
 		"input-title": {
 			"type": "title",
 			"name": "Input Settings",
