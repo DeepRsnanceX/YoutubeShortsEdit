@@ -22,6 +22,11 @@ class $modify(ShortsEditPL, PlayLayer) {
 		CCSpriteGrayscale* grayscreen = nullptr;
 	};
 
+	void updateReleaseValidPL(float dt) {
+		isReleaseValid = true;
+		this->unschedule(schedule_selector(ShortsEditPL::updateReleaseValidPL));
+	}
+
 	CCTexture2D* renderPL() {
 		auto fields = m_fields.self();
 		if (!fields->plRenderer) return nullptr;
@@ -33,6 +38,24 @@ class $modify(ShortsEditPL, PlayLayer) {
 		fields->plRenderer->end();
 
 		return fields->plRenderer->getSprite()->getTexture();
+	}
+
+	void postUpdate(float p0) {
+		PlayLayer::postUpdate(p0);
+
+		log::info("{}", isReleaseValid);
+	}
+
+	void resetLevel() {
+		PlayLayer::resetLevel();
+
+		isReleaseValid = false;
+		this->scheduleOnce(schedule_selector(ShortsEditPL::updateReleaseValidPL), 0.5f);
+	}
+
+	void levelComplete() {
+		PlayLayer::levelComplete();
+		isReleaseValid = false;
 	}
 
 	void setupHasCompleted() {
@@ -139,7 +162,6 @@ class $modify(ShortsEditPO, PlayerObject) {
 				gonnaPause = true;
 				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
 			}
-			
 		}
 
 		return true;
@@ -150,23 +172,25 @@ class $modify(ShortsEditPO, PlayerObject) {
 		
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
-		if (pausedByMod) return true;
-		if (gonnaPause) return true;
+		if (pausedByMod || gonnaPause) return true;
 		if (!isReleaseValid) return true;
+		if (playLayer->getCurrentPercentInt() == 100) return true;
 
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") return true;
 
 		if (!isButtonEnabled(p0)) return true;
 
 		int percent = playLayer->getCurrentPercentInt();
+		int threshold = (Mod::get()->getSettingValue<int64_t>("only-after") == 0) ? 1 : Mod::get()->getSettingValue<int64_t>("only-after");
+		log::info("threshold is: {}", threshold);
+		
 		int chance = getRandInt(0, 100);
 
 		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
-			if (percent >= Mod::get()->getSettingValue<int64_t>("only-after")) {
+			if (percent >= threshold) {
 				gonnaPause = true;
 				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
 			}
-			
 		}
 
 		return true;
@@ -193,11 +217,6 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 		if (lmao) lmao->setVisible(false);
 		if (vign) vign->setVisible(false);
 		if (plFields->grayscreen) plFields->grayscreen->setVisible(false);
-
-		auto player = pl->m_player1;
-        if (player) {
-            static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), 0.5f);
-        }
 	}
 
 	void customSetup() {
@@ -221,6 +240,12 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 
 	void onResume(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::onResume(sender);
+
+		auto pl = PlayLayer::get();
+		if (!pl) return;
+
+		auto player = pl->m_player1;
+        if (player) static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), 0.5f);
 	}
 	void onQuit(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::onQuit(sender);

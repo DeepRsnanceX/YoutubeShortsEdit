@@ -87,6 +87,17 @@
 			"name": "Right Button/Action",
 			"description": "Counts the Jump Button/Action as one that can trigger the effect.",
 			"default": true
+		},
+		"misc-title": {
+			"type": "title",
+			"name": "Misc Settings",
+			"description": "Other settings for other features of the mod."
+		},
+		"enable-wspeed": {
+			"type": "bool",
+			"name": "Enable W Speed Texts",
+			"description": "Toggles On/Off showing a text on screen describing what you're doing, similar to the 'W Speed' edit memes.",
+			"default": true
 		}
 	},
 	"resources": {
@@ -96,14 +107,16 @@
 			]
 		},
 		"files": [
-			"resources/phonk/*.ogg"
+			"resources/phonk/*.ogg",
+			"resources/other/*.png",
+			"resources/other/*.fnt"
 		]
 	},
 	"id": "saritahhh.youtubeshortsedit",
-	"name": "Sigma Phonk Edit Mode",
+	"name": "W Sigma Edit Mode",
 	"version": "v1.0.0",
 	"developer": "Saritahhh",
-	"description": ":skull:",
+	"description": "Geode's most W sigma mod :skull:",
 	"tags": ["modtober25", "joke", "gameplay"],
 	"links": {
 		"source": "https://github.com/DeepRsnanceX/YoutubeShortsEdit"
