@@ -40,12 +40,6 @@ class $modify(ShortsEditPL, PlayLayer) {
 		return fields->plRenderer->getSprite()->getTexture();
 	}
 
-	void postUpdate(float p0) {
-		PlayLayer::postUpdate(p0);
-
-		log::info("{}", isReleaseValid);
-	}
-
 	void resetLevel() {
 		PlayLayer::resetLevel();
 
@@ -75,7 +69,7 @@ class $modify(ShortsEditPL, PlayLayer) {
 		fields->grayscreen->setFlipY(true);
 		fields->grayscreen->setID("grayscale-screenshot"_spr);
 		fields->grayscreen->setVisible(false);
-		this->addChild(fields->grayscreen, 10000);
+		m_uiLayer->addChild(fields->grayscreen, 10000);
 
 		auto spr = CCSprite::createWithSpriteFrameName("editImg_1.png"_spr);
 		spr->setPosition({winSize.width / 2.f, 40.f});
@@ -182,7 +176,6 @@ class $modify(ShortsEditPO, PlayerObject) {
 
 		int percent = playLayer->getCurrentPercentInt();
 		int threshold = (Mod::get()->getSettingValue<int64_t>("only-after") == 0) ? 1 : Mod::get()->getSettingValue<int64_t>("only-after");
-		log::info("threshold is: {}", threshold);
 		
 		int chance = getRandInt(0, 100);
 
