@@ -26,7 +26,7 @@ class $modify(ShortsEditPL, PlayLayer) {
 		isReleaseValid = true;
 		this->unschedule(schedule_selector(ShortsEditPL::updateReleaseValidPL));
 	}
-
+	/*
 	CCTexture2D* renderPL() {
 		auto fields = m_fields.self();
 		if (!fields->plRenderer) return nullptr;
@@ -36,6 +36,45 @@ class $modify(ShortsEditPL, PlayLayer) {
 		fields->plRenderer->beginWithClear(0, 0, 0, 0);
 		this->visit();
 		fields->plRenderer->end();
+
+		return fields->plRenderer->getSprite()->getTexture();
+	}
+	*/
+
+	// credit to ery's grayscale mode mod
+	CCTexture2D* renderPL() {
+		auto fields = m_fields.self();
+		if (!fields->plRenderer) return nullptr;
+
+		if (fields->grayscreen) fields->grayscreen->setVisible(false);
+
+		auto view = CCEGLView::get();
+		auto director = CCDirector::sharedDirector();
+		
+		auto winSize = director->getWinSize();
+		auto ogRes = view->getDesignResolutionSize();
+
+		float ogX = view->m_fScaleX;
+		float ogY = view->m_fScaleY;
+
+		//CCSize ogScale = { view->m_fScaleX, view->m_fScaleY };
+		CCSize size = { roundf(320.f * (winSize.width / winSize.height)), 320.f };
+		CCSize newScale = { winSize.width / size.width, winSize.height / size.height };
+		float scale = director->getContentScaleFactor() / utils::getDisplayFactor();
+		
+		director->m_obWinSizeInPoints = size;
+		view->setDesignResolutionSize(size.width, size.height, ResolutionPolicy::kResolutionExactFit);
+		view->m_fScaleX = scale * newScale.width;
+		view->m_fScaleY = scale * newScale.height;
+
+		fields->plRenderer->beginWithClear(0, 0, 0, 0);
+		this->visit();
+		fields->plRenderer->end();
+
+		director->m_obWinSizeInPoints = ogRes;
+		view->setDesignResolutionSize(ogRes.width, ogRes.height, ResolutionPolicy::kResolutionExactFit);
+		view->m_fScaleX = ogX;
+		view->m_fScaleY = ogY;
 
 		return fields->plRenderer->getSprite()->getTexture();
 	}
