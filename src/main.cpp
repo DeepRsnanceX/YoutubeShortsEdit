@@ -132,8 +132,8 @@ class $modify(ShortsEditPL, PlayLayer) {
 		float ogX = view->m_fScaleX;
 		float ogY = view->m_fScaleY;
 
-		auto size = CCSize({roundf(320.f * (winSize.width / winSize.height)), 320.f});
-		auto newScale = CCSize({winSize.width / size.width, winSize.height / size.height});
+		CCSize size = {roundf(320.f * (winSize.width / winSize.height)), 320.f};
+		CCSize newScale = {winSize.width / size.width, winSize.height / size.height};
 		float scale = director->getContentScaleFactor() / utils::getDisplayFactor();
 		
 		director->m_obWinSizeInPoints = size;
