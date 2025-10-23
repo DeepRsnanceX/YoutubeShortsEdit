@@ -278,7 +278,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 		int percent = playLayer->getCurrentPercentInt();
 		int chance = getRandInt(0, 100);
 		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
-			if (percent >= Mod::get()->getSettingValue<int64_t>("only-after") && Mod::get()->getSettingValue<int64_t>("only-before") <= percent) {
+			if (percent >= Mod::get()->getSettingValue<int64_t>("only-after") && percent <= Mod::get()->getSettingValue<int64_t>("only-before")) {
 				gonnaPause = true;
 				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
 			}
@@ -306,7 +306,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 		int chance = getRandInt(0, 100);
 
 		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
-			if (percent >= threshold && Mod::get()->getSettingValue<int64_t>("only-before") <= percent) {
+			if (percent >= threshold && percent <= Mod::get()->getSettingValue<int64_t>("only-before")) {
 				gonnaPause = true;
 				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
 			}
