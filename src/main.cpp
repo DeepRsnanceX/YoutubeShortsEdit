@@ -114,7 +114,9 @@ class $modify(ShortsEditPL, PlayLayer) {
 		return allSounds[getRandInt(0, allSounds.size() - 1)];
 	}
 
-	// credit to ery's grayscale mode mod for this, fixes issues with shaders
+	// credit to zilko & ery's grayscale mode mod for the CCEGLView and Director shenanigans
+	// i would've NEVER figured ANY of this out on my own
+	// (fixes the grayscale "screenshot" when shaders are active)
 	CCTexture2D* renderPL() {
 		auto fields = m_fields.self();
 		if (!fields->plRenderer) return nullptr;
@@ -130,8 +132,8 @@ class $modify(ShortsEditPL, PlayLayer) {
 		float ogX = view->m_fScaleX;
 		float ogY = view->m_fScaleY;
 
-		CCSize size = { roundf(320.f * (winSize.width / winSize.height)), 320.f };
-		CCSize newScale = { winSize.width / size.width, winSize.height / size.height };
+		auto size = CCSize({roundf(320.f * (winSize.width / winSize.height)), 320.f});
+		auto newScale = CCSize({winSize.width / size.width, winSize.height / size.height});
 		float scale = director->getContentScaleFactor() / utils::getDisplayFactor();
 		
 		director->m_obWinSizeInPoints = size;
@@ -276,7 +278,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 		int percent = playLayer->getCurrentPercentInt();
 		int chance = getRandInt(0, 100);
 		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
-			if (percent >= Mod::get()->getSettingValue<int64_t>("only-after")) {
+			if (percent >= Mod::get()->getSettingValue<int64_t>("only-after") && Mod::get()->getSettingValue<int64_t>("only-before") <= percent) {
 				gonnaPause = true;
 				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
 			}
@@ -304,7 +306,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 		int chance = getRandInt(0, 100);
 
 		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
-			if (percent >= threshold) {
+			if (percent >= threshold && Mod::get()->getSettingValue<int64_t>("only-before") <= percent) {
 				gonnaPause = true;
 				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
 			}

@@ -27,9 +27,26 @@
 		"only-after": {
 			"type": "int",
 			"name": "Only After %",
-			"description": "Controls after what percentage can the edit start happening. \nTIP: If you want the effect to only happen at ur last click/at the end of the level, set this to a higher value like 98% and set rarity to 0.",
+			"description": "Controls after what percentage can the edit start happening. \n<cy>TIP:</c> If you want the effect to only happen at ur last click/at the end of the level, set this to a higher value like 98% and set rarity to 0.",
 			"default": 0,
 			"min": 0,
+			"max": 99,
+			"control": {
+				"input": true,
+				"slider": true,
+				"slider-step": 1,
+				"arrows": true,
+				"arrow-step": 1,
+				"big-arrows": true,
+				"big-arrow-step": 5
+			}
+		},
+		"only-before": {
+			"type": "int",
+			"name": "Only Before %",
+			"description": "Controls before what percentage can the edit start happening. This setting along with the Only After % setting allow you to choose the percentage range in which the edit can happen.",
+			"default": 100,
+			"min": 1,
 			"max": 100,
 			"control": {
 				"input": true,
@@ -51,7 +68,7 @@
 		"action-delay": {
 			"type": "float",
 			"name": "Action Delay",
-			"description": "Controls the delay between your chosen action and when the edit effect will happen. Setting it to 0.5 will wait for 0.5 seconds after you click/release before showing the effect.\nNo, you cannot currently configure how much the edit effect lasts.",
+			"description": "Controls the delay between your chosen action and when the edit effect will happen. Setting it to 0.5 will wait for 0.5 seconds after you click/release before showing the effect.",
 			"default": 0.0,
 			"min": 0,
 			"max": 120,
@@ -68,7 +85,7 @@
 		"effect-duration": {
 			"type": "float",
 			"name": "Effect Duration",
-			"description": "How long the edit effect (grayscale, image, sound) should last before automatically resuming. Maximum is 5 seconds.",
+			"description": "How long the edit effect (grayscale, image, sound) should last before automatically resuming. \nMax is 5 seconds for everyone's sanity.",
 			"default": 1.5,
 			"min": 0.1,
 			"max": 5.0,
@@ -85,53 +102,53 @@
 		"assets-title": {
 			"type": "title",
 			"name": "Assets Manager",
-			"description": "Manages which assets to include in the mod. Enable/Disable the mod's own assets and your own as you please!"
+			"description": "<cg>Manages which assets to include in the mod.</c> Enable/Disable the mod's own assets and your own as you please!"
 		},
 		"include-builtin-images": {
 			"type": "bool",
 			"name": "Include Built-in Images",
-			"description": "Enables/Disables showing the mod's built-in Images on the Edit Overlay.",
+			"description": "Enables/Disables including <cy>the mod's built-in Images</c> on the list of Images that can show up on the Edit Overlay.",
 			"default": true
 		},
 		"include-custom-images": {
 			"type": "bool",
 			"name": "Include Custom Images",
-			"description": "Enables/Disables showing your Custom Images on the Edit Overlay. \nTo add custom images, create a folder called 'images' in the Mod's config folder and place all your custom images there! \nTo access the mod's config folder, click the Folder button with a gear on it at the bottom right corner of this Popup. Only .png files are supported. \n\nPlease make sure your file names DON'T contain any special characters!!!",
+			"description": "Enables/Disables including <cp>your Custom Images</c> on the list of Images that can show up on the Edit Overlay. \nTo add custom images, create a folder called 'images' in the Mod's config folder and place all your custom images there! \nTo access the mod's config folder, click the Folder button with a gear on it at the bottom right corner of this Popup. Only .png files are supported. \n\nPlease make sure your file names DON'T contain any special characters!!!",
 			"default": false
 		},
 		"include-builtin-sounds": {
 			"type": "bool",
 			"name": "Include Built-in Sounds",
-			"description": "Enables/Disables playing the mod's built-in Phonk SFXs when the Edit effect is active.",
+			"description": "Enables/Disables including <cy>the mod's built-in Phonk SFXs</c> to the list of Sounds that can play when the Edit effect is active.",
 			"default": true
 		},
 		"include-custom-sounds": {
 			"type": "bool",
 			"name": "Include Custom Sounds",
-			"description": "Enables/Disables playing your Custom Music/SFXs when the Edit effect is active. \nTo add custom sounds, create a folder called 'phonk' in the Mod's config folder and place all your custom sounds there! \nTo access the mod's config folder, click the Folder button with a gear on it at the bottom right corner of this Popup. Supported file formats are: \n- .ogg \n- .mp3 \n- .wav \n\nPlease make sure your file names DON'T contain any special characters!!!",
+			"description": "Enables/Disables including <cp>your Custom Music/SFXs</c> to the list of Sounds that can play when the Edit effect is active. \nTo add custom sounds, create a folder called 'phonk' in the Mod's config folder and place all your custom sounds there! \nTo access the mod's config folder, click the Folder button with a gear on it at the bottom right corner of this Popup. Supported file formats are: \n- .ogg \n- .mp3 \n- .wav \n\nPlease make sure your file names DON'T contain any special characters!!!",
 			"default": false
 		},
 		"input-title": {
 			"type": "title",
 			"name": "Input Settings",
-			"description": "Settings to control which inputs activate the effect."
+			"description": "Settings to control which inputs activate the effect. \n<cy>TIP:</c> If you want to disable the mod's effects without disabling/uninstalling the whole mod, just disable all 3 settings under this category."
 		},
 		"allow-jumpbtn": {
 			"type": "bool",
 			"name": "Jump Button/Action",
-			"description": "Counts the Jump Button/Action as one that can trigger the effect.",
+			"description": "Counts the <cj>Jump Button/Action</c> as one that can trigger the effect.",
 			"default": true
 		},
 		"allow-leftbtn": {
 			"type": "bool",
 			"name": "Left Button/Action",
-			"description": "Counts the Jump Button/Action as one that can trigger the effect.",
+			"description": "Counts the <cj>Left Movement Button/Action</c> (Platformer) as one that can trigger the effect.",
 			"default": true
 		},
 		"allow-rightbtn": {
 			"type": "bool",
 			"name": "Right Button/Action",
-			"description": "Counts the Jump Button/Action as one that can trigger the effect.",
+			"description": "Counts the <cj>Right Movement Button/Action</c> (Platformer) as one that can trigger the effect.",
 			"default": true
 		},
 		"misc-title": {
@@ -142,7 +159,7 @@
 		"enable-wspeed": {
 			"type": "bool",
 			"name": "Enable W Speed Texts",
-			"description": "Toggles On/Off showing a text on screen describing what you're doing, similar to the 'W Speed' edit memes.",
+			"description": "Toggles On/Off showing a text on screen describing literally anything you're doing, similar to the 'W Speed' edit memes.",
 			"default": true
 		}
 	},

@@ -33,6 +33,7 @@ class $modify(WSpeedBaseLayer, GJBaseGameLayer) {
         int eventAsInt = static_cast<int>(event);
         ccColor3B playerColor = GameManager::sharedState()->colorForIdx(GameManager::sharedState()->getPlayerColor());
 
+        // credit to the cool ass python script that made this (i just edited the GlobalSounds one a lil)
         switch(eventAsInt) {
             case 23:
                 data.color = ccColor3B({0, 255, 0});
