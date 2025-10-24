@@ -4,7 +4,6 @@
 #include <random>
 
 using namespace geode::prelude;
-namespace fs = std::filesystem;
 
 int getRandInt(int min, int max) {
 	static std::random_device rd;
@@ -45,15 +44,15 @@ class $modify(ShortsEditPL, PlayLayer) {
 		}
 		
 		fields->builtinSounds.clear();
-		for (int i = 1; i <= 21; i++) {
+		for (int i = 1; i <= 26; i++) {
 			fields->builtinSounds.push_back(fmt::format("phonk_{}.ogg"_spr, i));
 		}
 		
 		if (Mod::get()->getSettingValue<bool>("include-custom-images")) {
 			auto imagesDir = Mod::get()->getConfigDir(true) / "images";
 			
-			if (fs::exists(imagesDir) && fs::is_directory(imagesDir)) {
-				for (const auto& entry : fs::directory_iterator(imagesDir)) {
+			if (std::filesystem::exists(imagesDir) && std::filesystem::is_directory(imagesDir)) {
+				for (const auto& entry : std::filesystem::directory_iterator(imagesDir)) {
 					if (entry.is_regular_file()) {
 						auto ext = entry.path().extension().string();
 						if (ext == ".png") {
@@ -67,8 +66,8 @@ class $modify(ShortsEditPL, PlayLayer) {
 		if (Mod::get()->getSettingValue<bool>("include-custom-sounds")) {
 			auto soundsDir = Mod::get()->getConfigDir(true) / "phonk";
 			
-			if (fs::exists(soundsDir) && fs::is_directory(soundsDir)) {
-				for (const auto& entry : fs::directory_iterator(soundsDir)) {
+			if (std::filesystem::exists(soundsDir) && std::filesystem::is_directory(soundsDir)) {
+				for (const auto& entry : std::filesystem::directory_iterator(soundsDir)) {
 					if (entry.is_regular_file()) {
 						auto ext = entry.path().extension().string();
 						if (ext == ".ogg" || ext == ".mp3" || ext == ".wav") {

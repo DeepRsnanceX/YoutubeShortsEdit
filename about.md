@@ -29,6 +29,7 @@ However, there's some important notes you need to know beforehand:
 - "W Speed" featured based on the popular iShowSpeed edit memes of the same name.
 - Inspired by a similar Minecraft mod by Ekically. [Original Tweet Here](https://x.com/Ekically/status/1979313933065555996)
 - <cl>Zilko</c> & <cj>Erymanthus</c>' GrayscaleMode mod - Used as reference to fix issues with shaders.
+- zMarc - Fellow creator of another separate mod with the same premise, inspired by the same Minecraft mod. Mutual endorsement.
 
 ## Music Credits
 - Hensonn - Sahara  
@@ -38,7 +39,6 @@ However, there's some important notes you need to know beforehand:
 - KSLV - Disaster
 - MUPP & Sadfriendd - Vendetta!
 - PlayaPhonk - Phonky Town
-- WEEDMANE x Suicideyear - SUICIDE YEAR
 - InterWorld - METAMORPHOSIS
 - Dxrk - RAVE
 - Kordhell - Murder in My Mind
