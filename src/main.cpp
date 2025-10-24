@@ -225,7 +225,8 @@ class $modify(ShortsEditPL, PlayLayer) {
 class $modify(ShortsEditPO, PlayerObject) {
 	void thoseWhoKnow(float dt) {
 
-		if (!canPlayEffect || pausedByMod || gonnaPause) return;
+		//this->unschedule(schedule_selector(ShortsEditPO::thoseWhoKnow));
+		if (!canPlayEffect || pausedByMod) return;
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return;
