@@ -388,7 +388,6 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 		if (!plFields) return;
 
 		canPlayEffect = false;
-		pausedByMod = false;
 		static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), Mod::get()->getSettingValue<double>("action-cooldown"));
 		
 		if (gonnaPause) gonnaPause = false;
