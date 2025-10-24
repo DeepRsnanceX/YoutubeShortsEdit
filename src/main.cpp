@@ -14,7 +14,7 @@ int getRandInt(int min, int max) {
 
 bool pausedByMod = false;
 bool gonnaPause = false;
-bool isReleaseValid = false;
+bool canPlayEffect = false;
 
 class $modify(ShortsEditPL, PlayLayer) {
 	struct Fields {
@@ -28,7 +28,7 @@ class $modify(ShortsEditPL, PlayLayer) {
 	};
 
 	void updateReleaseValidPL(float dt) {
-		isReleaseValid = true;
+		canPlayEffect = true;
 		this->unschedule(schedule_selector(ShortsEditPL::updateReleaseValidPL));
 	}
 
@@ -155,13 +155,22 @@ class $modify(ShortsEditPL, PlayLayer) {
 	void resetLevel() {
 		PlayLayer::resetLevel();
 
-		isReleaseValid = false;
-		this->scheduleOnce(schedule_selector(ShortsEditPL::updateReleaseValidPL), 0.5f);
+		canPlayEffect = false;
+		this->scheduleOnce(schedule_selector(ShortsEditPL::updateReleaseValidPL), Mod::get()->getSettingValue<double>("action-cooldown"));
+
+		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
+	}
+
+	void postUpdate(float p0) {
+		PlayLayer::postUpdate(p0);
+
+		log::info ("can play? {}", canPlayEffect);
 	}
 
 	void levelComplete() {
 		PlayLayer::levelComplete();
-		isReleaseValid = false;
+		canPlayEffect = false;
+		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
 	}
 
 	void setupHasCompleted() {
@@ -169,7 +178,7 @@ class $modify(ShortsEditPL, PlayLayer) {
 
 		pausedByMod = false;
 		gonnaPause = false;
-		isReleaseValid = true;
+		canPlayEffect = true;
 		auto fields = m_fields.self();
 		auto winSize = CCDirector::sharedDirector()->getWinSize();
 
@@ -249,7 +258,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 	}
 
 	void updateReleaseValid(float dt) {
-        isReleaseValid = true;
+        canPlayEffect = true;
         this->unschedule(schedule_selector(ShortsEditPO::updateReleaseValid));
     }
 
@@ -267,8 +276,8 @@ class $modify(ShortsEditPO, PlayerObject) {
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
-		if (pausedByMod) return true;
-		if (gonnaPause) return true;
+		if (pausedByMod || gonnaPause) return true;
+		if (!canPlayEffect) return true;
 
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Click") return true;
 
@@ -292,7 +301,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
 		if (pausedByMod || gonnaPause) return true;
-		if (!isReleaseValid) return true;
+		if (!canPlayEffect) return true;
 		if (playLayer->getCurrentPercentInt() == 100) return true;
 
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") return true;
@@ -319,7 +328,7 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 	void okayDude(float dt) {
 		pausedByMod = false;
 		gonnaPause = false;
-		isReleaseValid = false;
+		//canPlayEffect = false;
 
 		FMODAudioEngine::sharedEngine()->stopAllEffects();
 
@@ -367,7 +376,10 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 		if (!pl) return;
 
 		auto player = pl->m_player1;
-        if (player) static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), 0.5f);
+		if (!player) return;
+        
+		canPlayEffect = false;
+		static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), Mod::get()->getSettingValue<double>("action-cooldown"));
 	}
 	void onQuit(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::onQuit(sender);
