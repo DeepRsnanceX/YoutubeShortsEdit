@@ -28,7 +28,7 @@ However, there's some important notes you need to know beforehand:
 # Credits
 ## Main Credits
 - Based on generic TikTok/Youtube Shorts Phonk edits.
-- "W Speed" featured based on the popular iShowSpeed edit memes of the same name.
+- "W Speed" feature based on the popular iShowSpeed edit memes of the same name.
 - Inspired by a similar Minecraft mod by Ekically. [Original Tweet Here](https://x.com/Ekically/status/1979313933065555996)
 - Zilko & Erymanthus' GrayscaleMode mod - Used as reference to fix issues with shaders.
 - zMarc - Fellow creator of another separate mod with the same premise, inspired by the same Minecraft mod. Mutual endorsement.
@@ -43,7 +43,7 @@ However, there's some important notes you need to know beforehand:
 - PlayaPhonk - Phonky Town
 - InterWorld - METAMORPHOSIS
 - Dxrk - RAVE
-- Kordhell - Murder in My Mind
+- Kordhell - Mxrd3r in My Mind
 - DVRST - Close Eyes
 - 6ynthmane, RXDXVIL - BRAZILIAN DANCA PHONK
 - sma$her & MXZI - Acelerada
