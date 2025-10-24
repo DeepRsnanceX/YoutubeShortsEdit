@@ -262,6 +262,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 			}
 		}
 
+		gonnaPause = false;
 		pausedByMod = true;
 		playLayer->m_uiLayer->m_pauseBtn->activate();
 	}
@@ -332,7 +333,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 class $modify(ShortsEditPauseLayer, PauseLayer) {
 	void okayDude(float dt) {
 		pausedByMod = false;
-		gonnaPause = false;
+		//gonnaPause = false;
 		//canPlayEffect = false;
 
 		FMODAudioEngine::sharedEngine()->stopAllEffects();
@@ -361,6 +362,8 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 
 		auto plFields = static_cast<ShortsEditPL*>(playLayer)->m_fields.self();
 		if (!plFields) return;
+
+		if (gonnaPause) gonnaPause = false;
 		
 		if (pausedByMod) {
 			this->setPositionY(3000.f);
@@ -379,13 +382,20 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 
 		auto pl = PlayLayer::get();
 		if (!pl) return;
-
 		auto player = pl->m_player1;
 		if (!player) return;
+		auto plFields = static_cast<ShortsEditPL*>(pl)->m_fields.self();
+		if (!plFields) return;
 
 		canPlayEffect = false;
+		pausedByMod = false;
 		static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), Mod::get()->getSettingValue<double>("action-cooldown"));
+		
 		if (gonnaPause) gonnaPause = false;
+
+		if (plFields->grayscreen) {
+			if (plFields->grayscreen->isVisible()) plFields->grayscreen->setVisible(false);
+		}
 	}
 	void onQuit(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::onQuit(sender);
