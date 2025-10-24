@@ -158,7 +158,7 @@ class $modify(ShortsEditPL, PlayLayer) {
 		canPlayEffect = false;
 		this->scheduleOnce(schedule_selector(ShortsEditPL::updateReleaseValidPL), Mod::get()->getSettingValue<double>("action-cooldown"));
 
-		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
+		if (m_fields->grayscreen->isVisible()) m_fields->grayscreen->setVisible(false);
 	}
 
 	void postUpdate(float p0) {
@@ -170,7 +170,7 @@ class $modify(ShortsEditPL, PlayLayer) {
 	void levelComplete() {
 		PlayLayer::levelComplete();
 		canPlayEffect = false;
-		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
+		if (m_fields->grayscreen->isVisible()) m_fields->grayscreen->setVisible(false);
 	}
 
 	void setupHasCompleted() {
