@@ -391,10 +391,6 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 		static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), Mod::get()->getSettingValue<double>("action-cooldown"));
 		
 		if (gonnaPause) gonnaPause = false;
-
-		if (plFields->grayscreen) {
-			if (plFields->grayscreen->isVisible()) plFields->grayscreen->setVisible(false);
-		}
 	}
 	void onQuit(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::onQuit(sender);
