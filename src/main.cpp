@@ -163,6 +163,13 @@ class $modify(ShortsEditPL, PlayLayer) {
 		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
 	}
 
+	void resume() {
+		PlayLayer::resume();
+
+		canPlayEffect = false;
+		this->scheduleOnce(schedule_selector(ShortsEditPL::updateReleaseValidPL), Mod::get()->getSettingValue<double>("action-cooldown"));
+	}
+
 	void postUpdate(float p0) {
 		PlayLayer::postUpdate(p0);
 
@@ -281,11 +288,10 @@ class $modify(ShortsEditPO, PlayerObject) {
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
-		if (pausedByMod || gonnaPause) return true;
+		if (pausedByMod) return true;
+		if (gonnaPause) return true;
 		if (!canPlayEffect) return true;
-
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Click") return true;
-
 		if (!isButtonEnabled(p0)) return true;
 		
 		int percent = playLayer->getCurrentPercentInt();
@@ -305,12 +311,11 @@ class $modify(ShortsEditPO, PlayerObject) {
 		
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
-		if (pausedByMod || gonnaPause) return true;
+		if (pausedByMod) return true;
+		if (gonnaPause) return true;
 		if (!canPlayEffect) return true;
 		if (playLayer->getCurrentPercentInt() == 100) return true;
-
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") return true;
-
 		if (!isButtonEnabled(p0)) return true;
 
 		int percent = playLayer->getCurrentPercentInt();
@@ -376,15 +381,6 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 
 	void onResume(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::onResume(sender);
-
-		auto pl = PlayLayer::get();
-		if (!pl) return;
-
-		auto player = pl->m_player1;
-		if (!player) return;
-        
-		canPlayEffect = false;
-		static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), Mod::get()->getSettingValue<double>("action-cooldown"));
 	}
 	void onQuit(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::onQuit(sender);
