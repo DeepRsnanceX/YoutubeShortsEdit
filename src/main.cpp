@@ -163,17 +163,10 @@ class $modify(ShortsEditPL, PlayLayer) {
 		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
 	}
 
-	void resume() {
-		PlayLayer::resume();
-
-		canPlayEffect = false;
-		this->scheduleOnce(schedule_selector(ShortsEditPL::updateReleaseValidPL), Mod::get()->getSettingValue<double>("action-cooldown"));
-	}
-
 	void postUpdate(float p0) {
 		PlayLayer::postUpdate(p0);
 
-		log::info ("can play? {}", canPlayEffect);
+		//log::info ("can play? {}", canPlayEffect);
 	}
 
 	void levelComplete() {
@@ -224,52 +217,29 @@ class $modify(ShortsEditPL, PlayLayer) {
 
 class $modify(ShortsEditPO, PlayerObject) {
 	void thoseWhoKnow(float dt) {
-		log::info("=== thoseWhoKnow called ===");
-		log::info("canPlayEffect: {}", canPlayEffect);
-		log::info("pausedByMod: {}", pausedByMod);
-		
-		if (!canPlayEffect || pausedByMod) {
-			log::warn("Early return - canPlayEffect or pausedByMod check failed");
-			return;
-		}
+
+		//this->unschedule(schedule_selector(ShortsEditPO::thoseWhoKnow));
+		if (!canPlayEffect || pausedByMod) return;
 
 		auto playLayer = PlayLayer::get();
-		if (!playLayer) {
-			log::warn("Early return - no PlayLayer");
-			return;
-		}
+		if (!playLayer) return;
 
 		auto plFields = static_cast<ShortsEditPL*>(playLayer)->m_fields.self();
-		if (!plFields) {
-			log::warn("Early return - no plFields");
-			return;
-		}
+		if (!plFields) return;
 
 		auto yeah = static_cast<CCSprite*>(playLayer->getChildByID("no-description-needed"_spr));
-		if (!yeah) {
-			log::warn("Early return - no yeah sprite");
-			return;
-		}
+		if (!yeah) return;
 
 		auto vign = playLayer->getChildByID("edit-vignette"_spr);
-		if (!vign) {
-			log::warn("Early return - no vignette");
-			return;
-		}
+		if (!vign) return;
 
-		if (!plFields->grayscreen) {
-			log::warn("Early return - no grayscreen");
-			return;
-		}
-
-		log::info("All checks passed, rendering grayscale...");
+		if (!plFields->grayscreen) return;
 
 		if (plFields->grayscreen && plFields->plRenderer) {
 			auto rendered = static_cast<ShortsEditPL*>(playLayer)->renderPL();
 			if (rendered) {
 				plFields->grayscreen->setTexture(rendered);
 				plFields->grayscreen->setTextureRect(CCRect(0, 0, rendered->getContentSize().width, rendered->getContentSize().height));
-				log::info("Grayscale rendered successfully");
 			}
 		}
 		
@@ -278,24 +248,20 @@ class $modify(ShortsEditPO, PlayerObject) {
 		plFields->grayscreen->setVisible(true);
 
 		std::string chosenImg = static_cast<ShortsEditPL*>(playLayer)->getRandomImage();
-		log::info("Chosen image: {}", chosenImg);
 		
 		if (chosenImg.find("editImg_") != std::string::npos) {
 			auto frame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(chosenImg.c_str());
 			if (frame) {
 				yeah->setDisplayFrame(frame);
-				log::info("Set builtin sprite frame");
 			}
 		} else {
 			auto texture = CCTextureCache::sharedTextureCache()->addImage(chosenImg.c_str(), false);
 			if (texture) {
 				yeah->setTexture(texture);
 				yeah->setTextureRect(CCRect(0, 0, texture->getContentSize().width, texture->getContentSize().height));
-				log::info("Set custom image texture");
 			}
 		}
 
-		log::info("Setting pausedByMod = true and activating pause button");
 		pausedByMod = true;
 		playLayer->m_uiLayer->m_pauseBtn->activate();
 	}
@@ -337,67 +303,26 @@ class $modify(ShortsEditPO, PlayerObject) {
 	}
 
 	bool releaseButton(PlayerButton p0) {
-		if (!PlayerObject::releaseButton(p0)) {
-			log::info("releaseButton: Parent returned false");
-			return false;
-		}
+		if (!PlayerObject::releaseButton(p0)) return false;
 		
 		auto playLayer = PlayLayer::get();
-		if (!playLayer) {
-			log::info("releaseButton: No PlayLayer");
-			return true;
-		}
-		
-		log::info("=== releaseButton checks ===");
-		log::info("pausedByMod: {}", pausedByMod);
-		log::info("gonnaPause: {}", gonnaPause);
-		log::info("canPlayEffect: {}", canPlayEffect);
-		
-		if (pausedByMod || gonnaPause) {
-			log::info("releaseButton: Blocked by pausedByMod or gonnaPause");
-			return true;
-		}
-		if (!canPlayEffect) {
-			log::info("releaseButton: Blocked by !canPlayEffect");
-			return true;
-		}
-		if (playLayer->getCurrentPercentInt() == 100) {
-			log::info("releaseButton: Blocked by 100% completion");
-			return true;
-		}
-		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") {
-			log::info("releaseButton: Wrong mode (not On Release)");
-			return true;
-		}
-		if (!isButtonEnabled(p0)) {
-			log::info("releaseButton: Button not enabled");
-			return true;
-		}
+		if (!playLayer) return true;
+		if (pausedByMod || gonnaPause) return true;
+		if (!canPlayEffect) return true;
+		if (playLayer->getCurrentPercentInt() == 100) return true;
+		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") return true;
+		if (!isButtonEnabled(p0)) return true;
 
 		int percent = playLayer->getCurrentPercentInt();
 		int threshold = (Mod::get()->getSettingValue<int64_t>("only-after") == 0) ? 1 : Mod::get()->getSettingValue<int64_t>("only-after");
 		
-		log::info("Current percent: {}, threshold: {}", percent, threshold);
-		
 		int chance = getRandInt(0, 100);
-		int rarity = Mod::get()->getSettingValue<int64_t>("edit-rarity");
-		
-		log::info("Chance: {}, Rarity: {}", chance, rarity);
 
-		if (chance >= rarity) {
-			log::info("Rarity check passed!");
-			int onlyBefore = Mod::get()->getSettingValue<int64_t>("only-before");
-			log::info("only-before: {}", onlyBefore);
-			
-			if (percent >= threshold && percent <= onlyBefore) {
-				log::info("TRIGGERING EFFECT! Setting gonnaPause=true and scheduling thoseWhoKnow");
+		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
+			if (percent >= threshold && percent <= Mod::get()->getSettingValue<int64_t>("only-before")) {
 				gonnaPause = true;
 				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
-			} else {
-				log::info("Percent check failed (not in range)");
 			}
-		} else {
-			log::info("Rarity check failed");
 		}
 
 		return true;
@@ -451,6 +376,16 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 
 	void onResume(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::onResume(sender);
+
+		auto pl = PlayLayer::get();
+		if (!pl) return;
+
+		auto player = pl->m_player1;
+		if (!player) return;
+
+		canPlayEffect = false;
+		static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::updateReleaseValid), Mod::get()->getSettingValue<double>("action-cooldown"));
+		if (gonnaPause) gonnaPause = false;
 	}
 	void onQuit(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::onQuit(sender);
