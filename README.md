@@ -48,3 +48,12 @@ However, there's some important notes you need to know beforehand:
 - 6ynthmane, RXDXVIL - BRAZILIAN DANCA PHONK
 - sma$her & MXZI - Acelerada
 - Nakama, Mc Staff, EP - DIA DELICIA
+
+## Image Credits
+Honestly, these phonk/sigma/void edits of trollface and various memes are so generic and so widespread it's probably impossible for me to find every single creator for the images included. So, credit to their respective artists and authors.
+However, i'll list the ones i'm aware of:
+
+- Skull, Skull with Crossbones & Hot Face emojis: by Apple, from iOS 18.4.
+- 3D skull with raised eyebrow: Memoji App (i think).
+- Moyai emoji: by Apple, from iOS 10.2-18.4.
+- Extremely exaggerated creepy front-facing trollface: ScorchVx (i think, again).
