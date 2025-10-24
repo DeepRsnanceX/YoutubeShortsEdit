@@ -155,10 +155,12 @@ class $modify(ShortsEditPL, PlayLayer) {
 	void resetLevel() {
 		PlayLayer::resetLevel();
 
+		auto fields = m_fields.self();
 		canPlayEffect = false;
 		this->scheduleOnce(schedule_selector(ShortsEditPL::updateReleaseValidPL), Mod::get()->getSettingValue<double>("action-cooldown"));
 
-		if (m_fields->grayscreen->isVisible()) m_fields->grayscreen->setVisible(false);
+		if (!fields->grayscreen) return;
+		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
 	}
 
 	void postUpdate(float p0) {
@@ -169,8 +171,11 @@ class $modify(ShortsEditPL, PlayLayer) {
 
 	void levelComplete() {
 		PlayLayer::levelComplete();
+		auto fields = m_fields.self();
 		canPlayEffect = false;
-		if (m_fields->grayscreen->isVisible()) m_fields->grayscreen->setVisible(false);
+
+		if (!fields->grayscreen) return;
+		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
 	}
 
 	void setupHasCompleted() {
