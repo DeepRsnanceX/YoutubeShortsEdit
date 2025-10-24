@@ -224,6 +224,9 @@ class $modify(ShortsEditPL, PlayLayer) {
 
 class $modify(ShortsEditPO, PlayerObject) {
 	void thoseWhoKnow(float dt) {
+
+		if (!canPlayEffect || pausedByMod || gonnaPause) return;
+
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return;
 
@@ -288,8 +291,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
-		if (pausedByMod) return true;
-		if (gonnaPause) return true;
+		if (pausedByMod || gonnaPause) return true;
 		if (!canPlayEffect) return true;
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Click") return true;
 		if (!isButtonEnabled(p0)) return true;
@@ -311,8 +313,7 @@ class $modify(ShortsEditPO, PlayerObject) {
 		
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
-		if (pausedByMod) return true;
-		if (gonnaPause) return true;
+		if (pausedByMod || gonnaPause) return true;
 		if (!canPlayEffect) return true;
 		if (playLayer->getCurrentPercentInt() == 100) return true;
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") return true;
