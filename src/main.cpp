@@ -1,9 +1,12 @@
-#include <geode.custom-keybinds/include/Keybinds.hpp>
 #include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/modify/PlayerObject.hpp>
 #include <Geode/modify/PauseLayer.hpp>
 #include <Geode/modify/PlayLayer.hpp>
 #include <random>
+
+#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ANDROID) || defined(GEODE_IS_MACOS)
+#include <geode.custom-keybinds/include/Keybinds.hpp>
+#endif
 
 using namespace geode::prelude;
 using namespace keybinds;
@@ -23,6 +26,7 @@ struct ButtonPositionData {
 };
 
 $on_mod(Loaded) {
+	#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ANDROID) || defined(GEODE_IS_MACOS)
 	BindManager::get()->registerBindable({
 		"activate-phonk-edit"_spr,
 		"Trigger Phonk Edit Manually",
@@ -30,6 +34,7 @@ $on_mod(Loaded) {
 		{ Keybind::create(KEY_V, Modifier::None) },
 		Mod::get()->getName()
 	});
+	#endif
 }
 
 bool pausedByMod = false;
@@ -430,12 +435,14 @@ class $modify(ShortsEditGJBGL, GJBaseGameLayer) {
 		
 		if (!Mod::get()->getSettingValue<bool>("trigger-manually")) return true;
 
+		#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ANDROID) || defined(GEODE_IS_MACOS)
 		this->addEventListener<InvokeBindFilter>([=, this](InvokeBindEvent* event) {
 			if (event->isDown()) {
 				activateManually();
 			}
 			return ListenerResult::Propagate;
 		}, "activate-phonk-edit"_spr);
+		#endif
 		
 		if (Mod::get()->getSettingValue<bool>("enable-button")) {
 			// jajaj dise posdata
