@@ -6,10 +6,10 @@
 
 #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ANDROID) || defined(GEODE_IS_MACOS)
 #include <geode.custom-keybinds/include/Keybinds.hpp>
+using namespace keybinds;
 #endif
 
 using namespace geode::prelude;
-using namespace keybinds;
 
 int getRandInt(int min, int max) {
 	static std::random_device rd;
