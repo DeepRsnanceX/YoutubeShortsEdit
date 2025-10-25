@@ -242,7 +242,12 @@
 		"geode.node-ids": ">=v1.20.0",
 		"geode.custom-keybinds": {
 			"importance": "required",
-			"version": ">=1.11.0"
+			"version": ">=1.11.0",
+			"platforms": [
+				"win",
+				"android",
+				"mac"
+			]
 		}
 	}
 }
