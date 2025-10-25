@@ -430,7 +430,7 @@ class $modify(ShortsEditGJBGL, GJBaseGameLayer) {
 		
 		if (!Mod::get()->getSettingValue<bool>("trigger-manually")) return true;
 
-		this->addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
+		this->addEventListener<InvokeBindFilter>([=, this](InvokeBindEvent* event) {
 			if (event->isDown()) {
 				activateManually();
 			}
