@@ -186,8 +186,19 @@ class $modify(ShortsEditPL, PlayLayer) {
 		canPlayEffect = false;
 		this->scheduleOnce(schedule_selector(ShortsEditPL::updateReleaseValidPL), Mod::get()->getSettingValue<double>("action-cooldown"));
 
+		if (gonnaPause) gonnaPause = false;
+		pausedByMod = false;
+
 		if (!fields->grayscreen) return;
 		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
+
+		auto vign = this->getChildByID("edit-vignette"_spr);
+		if (!vign) return;
+		if (vign->isVisible()) vign->setVisible(false);
+
+		auto editImg = this->getChildByID("no-description-needed"_spr);
+		if (!editImg) return;
+		if (editImg->isVisible()) editImg->setVisible(false);
 	}
 
 	void levelComplete() {
@@ -539,5 +550,17 @@ class $modify(ShortsEditPauseLayer, PauseLayer) {
 	}
 	void tryQuit(CCObject* sender) {
 		if (!pausedByMod) PauseLayer::tryQuit(sender);
+	}
+	void onRestart(CCObject* sender) {
+		if (!pausedByMod) PauseLayer::onRestart(sender);
+	}
+	void onRestartFull(CCObject* sender) {
+		if (!pausedByMod) PauseLayer::onRestartFull(sender);
+	}
+	void onPracticeMode(CCObject* sender) {
+		if (!pausedByMod) PauseLayer::onPracticeMode(sender);
+	}
+	void onNormalMode(CCObject* sender) {
+		if (!pausedByMod) PauseLayer::onNormalMode(sender);
 	}
 };
