@@ -4,7 +4,7 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include <random>
 
-#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ANDROID) || defined(GEODE_IS_MACOS)
+#ifndef GEODE_IS_IOS
 #include <geode.custom-keybinds/include/Keybinds.hpp>
 using namespace keybinds;
 #endif
@@ -26,7 +26,7 @@ struct ButtonPositionData {
 };
 
 $on_mod(Loaded) {
-	#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ANDROID) || defined(GEODE_IS_MACOS)
+	#ifndef GEODE_IS_IOS
 	BindManager::get()->registerBindable({
 		"activate-phonk-edit"_spr,
 		"Trigger Phonk Edit Manually",
@@ -435,7 +435,7 @@ class $modify(ShortsEditGJBGL, GJBaseGameLayer) {
 		
 		if (!Mod::get()->getSettingValue<bool>("trigger-manually")) return true;
 
-		#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ANDROID) || defined(GEODE_IS_MACOS)
+		#ifndef GEODE_IS_IOS
 		this->addEventListener<InvokeBindFilter>([=, this](InvokeBindEvent* event) {
 			if (event->isDown()) {
 				activateManually();
