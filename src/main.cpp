@@ -1,16 +1,35 @@
 #include <geode.custom-keybinds/include/Keybinds.hpp>
+#include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/modify/PlayerObject.hpp>
 #include <Geode/modify/PauseLayer.hpp>
 #include <Geode/modify/PlayLayer.hpp>
 #include <random>
 
 using namespace geode::prelude;
+using namespace keybinds;
 
 int getRandInt(int min, int max) {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(min, max);
 	return distrib(gen);
+}
+
+struct ButtonPositionData {
+	float xPos;
+	float yPos;
+	float xAnchor;
+	float yAnchor;
+};
+
+$on_mod(Loaded) {
+	BindManager::get()->registerBindable({
+		"activate-phonk-edit"_spr,
+		"Trigger Phonk Edit Manually",
+		"Manually triggers the phonk edit effect.",
+		{ Keybind::create(KEY_V, Modifier::None) },
+		Mod::get()->getName()
+	});
 }
 
 bool pausedByMod = false;
@@ -166,12 +185,6 @@ class $modify(ShortsEditPL, PlayLayer) {
 		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
 	}
 
-	void postUpdate(float p0) {
-		PlayLayer::postUpdate(p0);
-
-		//log::info ("can play? {}", canPlayEffect);
-	}
-
 	void levelComplete() {
 		PlayLayer::levelComplete();
 		auto fields = m_fields.self();
@@ -179,6 +192,15 @@ class $modify(ShortsEditPL, PlayLayer) {
 
 		if (!fields->grayscreen) return;
 		if (fields->grayscreen->isVisible()) fields->grayscreen->setVisible(false);
+
+		if (Mod::get()->getSettingValue<bool>("hide-on-complete")) {
+			auto vignette = this->getChildByID("edit-vignette"_spr);
+			if (vignette) vignette->setVisible(false);
+
+			auto editImg = this->getChildByID("no-description-needed"_spr);
+			if (editImg) editImg->setVisible(false);
+		}
+		
 	}
 
 	void setupHasCompleted() {
@@ -330,6 +352,115 @@ class $modify(ShortsEditPO, PlayerObject) {
 				gonnaPause = true;
 				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
 			}
+		}
+
+		return true;
+	}
+};
+
+class $modify(ShortsEditGJBGL, GJBaseGameLayer) {
+	ButtonPositionData getButtonPosData(std::string chosenSetting) {
+		ButtonPositionData data;
+		float safeZone = 7.f;
+
+		log::info("Chosen Button Position: {}", chosenSetting);
+
+		if (chosenSetting == "Top Left") {
+			data.xPos = safeZone;
+			data.yPos = CCDirector::sharedDirector()->getWinSize().height - safeZone;
+			data.xAnchor = 0.f;
+			data.yAnchor = 1.f;
+		} else if (chosenSetting == "Bottom Left") {
+			data.xPos = safeZone;
+			data.yPos = safeZone;
+			data.xAnchor = 0.f;
+			data.yAnchor = 0.f;
+		} else if (chosenSetting == "Bottom Right") {
+			data.xPos = CCDirector::sharedDirector()->getWinSize().width - safeZone;
+			data.yPos = safeZone;
+			data.xAnchor = 1.f;
+			data.yAnchor = 0.f;
+		} else {
+			// default to bottom right cuz that's the better pos
+			data.xPos = CCDirector::sharedDirector()->getWinSize().width - safeZone;
+			data.yPos = safeZone;
+			data.xAnchor = 1.f;
+			data.yAnchor = 0.f;
+		}
+
+		return data;
+	}
+
+	void activateManually() {
+		auto playLayer = PlayLayer::get();
+		if (!playLayer) return;
+		
+		if (!Mod::get()->getSettingValue<bool>("trigger-manually")) return;
+		if (pausedByMod || gonnaPause || !canPlayEffect) return;
+		
+		int percent = playLayer->getCurrentPercentInt();
+		if (percent == 100) return;
+		
+		auto player = this->m_player1;
+		if (!player) return;
+		
+		gonnaPause = true;
+		static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
+	}
+
+	void literallyTheSameThingButForTheButton(CCObject* sender) {
+		auto playLayer = PlayLayer::get();
+		if (!playLayer) return;
+		
+		if (!Mod::get()->getSettingValue<bool>("trigger-manually")) return;
+		if (pausedByMod || gonnaPause || !canPlayEffect) return;
+		
+		int percent = playLayer->getCurrentPercentInt();
+		if (percent == 100) return;
+		
+		auto player = this->m_player1;
+		if (!player) return;
+		
+		gonnaPause = true;
+		static_cast<ShortsEditPO*>(player)->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
+	}
+
+	bool init() {
+		if (!GJBaseGameLayer::init()) return false;
+		
+		if (!Mod::get()->getSettingValue<bool>("trigger-manually")) return true;
+
+		this->addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
+			if (event->isDown()) {
+				activateManually();
+			}
+			return ListenerResult::Propagate;
+		}, "activate-phonk-edit"_spr);
+		
+		if (Mod::get()->getSettingValue<bool>("enable-button")) {
+			// jajaj dise posdata
+			ButtonPositionData btnPosData = getButtonPosData(Mod::get()->getSettingValue<std::string>("button-pos"));
+
+			auto btnSpr = CCSprite::createWithSpriteFrameName("manualBtn.png"_spr);
+			btnSpr->setOpacity(75);
+
+			auto btn = CCMenuItemSpriteExtra::create(
+				btnSpr, 
+				this, 
+				menu_selector(ShortsEditGJBGL::literallyTheSameThingButForTheButton)
+			);
+
+			auto menu = CCMenu::create();
+			menu->setContentSize(btnSpr->getContentSize());
+			menu->setPosition({btnPosData.xPos, btnPosData.yPos});
+			menu->setAnchorPoint({btnPosData.xAnchor, btnPosData.yAnchor});
+			menu->ignoreAnchorPointForPosition(false);
+			menu->setID("manual-phonk-btn"_spr);
+			menu->addChild(btn);
+
+			btn->setPosition({menu->getContentSize().width / 2.f, menu->getContentSize().height / 2.f});
+
+			m_uiLayer->addChild(menu);
 		}
 
 		return true;

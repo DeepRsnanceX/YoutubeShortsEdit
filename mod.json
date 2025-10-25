@@ -30,7 +30,7 @@
 				"big-arrow-step": 5
 			},
 			"enable-if": "!trigger-manually",
-			"enable-if-description": "Normal behavior is disabled if the effect is set to manual trigger!"
+			"enable-if-description": "Unavailable for Manual Trigger"
 		},
 		"only-after": {
 			"type": "int",
@@ -49,7 +49,7 @@
 				"big-arrow-step": 5
 			},
 			"enable-if": "!trigger-manually",
-			"enable-if-description": "Normal behavior is disabled if the effect is set to manual trigger!"
+			"enable-if-description": "Unavailable for Manual Trigger"
 		},
 		"only-before": {
 			"type": "int",
@@ -68,7 +68,7 @@
 				"big-arrow-step": 5
 			},
 			"enable-if": "!trigger-manually",
-			"enable-if-description": "Normal behavior is disabled if the effect is set to manual trigger!"
+			"enable-if-description": "Unavailable for Manual Trigger"
 		},
 		"mod-mode": {
 			"type": "string",
@@ -77,7 +77,7 @@
 			"default": "On Click",
 			"one-of": ["On Click", "On Release"],
 			"enable-if": "!trigger-manually",
-			"enable-if-description": "Normal behavior is disabled if the effect is set to manual trigger!"
+			"enable-if-description": "Unavailable for Manual Trigger"
 		},
 		"effect-duration": {
 			"type": "float",
@@ -192,6 +192,29 @@
 			"name": "Enable W Speed Texts",
 			"description": "Toggles On/Off showing a text on screen describing literally anything you're doing, similar to the 'W Speed' edit memes.",
 			"default": true
+		},
+		"hide-on-complete": {
+			"type": "bool",
+			"name": "Hide On Level Complete",
+			"description": "If enabled, what remains of the edit effect (grayscale, image, sound) will be forcibly removed when you complete the level, in case it was still active. \n Why is this a setting if it's a fix, u might ask? \n\nCuz it's honestly pretty funny to see the sprites remain on screen lol.",
+			"default": false
+		},
+		"enable-button": {
+			"type": "bool",
+			"name": "Enable Manual Button",
+			"description": "If enabled, adds a button to the game's UI that allows you to manually trigger the edit effect. \nRequires Manual Trigger to be enabled, as this is specifically a mobile alternative to the keybind!",
+			"default": false,
+			"enable-if": "trigger-manually",
+			"enable-if-description": "Requires Manual Trigger to be enabled!"
+		},
+		"button-pos": {
+			"type": "string",
+			"name": "Manual Button Position",
+			"description": "Controls where the Manual Trigger Button appears on screen. \n- Bottom Left: Bottom Left Corner \n- Bottom Right: Bottom Right Corner \n- Top Left: Top Left Corner \nTop Right is not available due to very easily conflicting with the Pause button.",
+			"default": "Bottom Right",
+			"one-of": ["Bottom Left", "Bottom Right", "Top Left"],
+			"enable-if": "enable-button",
+			"enable-if-description": "Requires Manual Trigger Button to be enabled!"
 		}
 	},
 	"resources": {
@@ -218,8 +241,8 @@
 	"dependencies": {
 		"geode.node-ids": ">=v1.20.0",
 		"geode.custom-keybinds": {
-			"importance": "recommended",
-			"version": ">=1.10.0"
+			"importance": "required",
+			"version": ">=1.11.0"
 		}
 	}
 }
