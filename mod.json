@@ -7,6 +7,12 @@
 		"ios": "2.2074"
 	},
 	"settings": {
+		"trigger-manually": {
+			"type": "bool",
+			"name": "Trigger Manually",
+			"description": "If enabled, the edit effect will only trigger when you press the 'Trigger Edit Effect' keybind (V by default, can be changed in Custom Keybinds' menu). Disables all other input settings below, as they're unnecessary then.",
+			"default": false
+		},
 		"edit-rarity": {
 			"type": "int",
 			"name": "Rarity",
@@ -22,7 +28,9 @@
 				"arrow-step": 1,
 				"big-arrows": true,
 				"big-arrow-step": 5
-			}
+			},
+			"enable-if": "!trigger-manually",
+			"enable-if-description": "Normal behavior is disabled if the effect is set to manual trigger!"
 		},
 		"only-after": {
 			"type": "int",
@@ -39,7 +47,9 @@
 				"arrow-step": 1,
 				"big-arrows": true,
 				"big-arrow-step": 5
-			}
+			},
+			"enable-if": "!trigger-manually",
+			"enable-if-description": "Normal behavior is disabled if the effect is set to manual trigger!"
 		},
 		"only-before": {
 			"type": "int",
@@ -56,14 +66,18 @@
 				"arrow-step": 1,
 				"big-arrows": true,
 				"big-arrow-step": 5
-			}
+			},
+			"enable-if": "!trigger-manually",
+			"enable-if-description": "Normal behavior is disabled if the effect is set to manual trigger!"
 		},
 		"mod-mode": {
 			"type": "string",
 			"name": "Trigger Mode",
 			"description": "Controls when is the mod's effect triggered. \n- On Click: Triggers the effect right as you click. \n- On Release: Triggers the effect right as you let go of your click.",
 			"default": "On Click",
-			"one-of": ["On Click", "On Release"]
+			"one-of": ["On Click", "On Release"],
+			"enable-if": "!trigger-manually",
+			"enable-if-description": "Normal behavior is disabled if the effect is set to manual trigger!"
 		},
 		"effect-duration": {
 			"type": "float",
@@ -194,7 +208,7 @@
 	},
 	"id": "saritahhh.youtubeshortsedit",
 	"name": "W Sigma Edit Mode",
-	"version": "v1.0.0",
+	"version": "v1.0.1",
 	"developers": ["Saritahhh", "zMarc"],
 	"description": "Geode's most W sigma mod :skull:",
 	"tags": ["modtober25", "joke", "gameplay"],
@@ -202,6 +216,10 @@
 		"source": "https://github.com/DeepRsnanceX/YoutubeShortsEdit"
 	},
 	"dependencies": {
-		"geode.node-ids": ">=v1.20.0"
+		"geode.node-ids": ">=v1.20.0",
+		"geode.custom-keybinds": {
+			"importance": "recommended",
+			"version": ">=1.10.0"
+		}
 	}
 }

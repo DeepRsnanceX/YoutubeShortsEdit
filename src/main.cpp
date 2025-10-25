@@ -1,6 +1,7 @@
+#include <geode.custom-keybinds/include/Keybinds.hpp>
 #include <Geode/modify/PlayerObject.hpp>
-#include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/PauseLayer.hpp>
+#include <Geode/modify/PlayLayer.hpp>
 #include <random>
 
 using namespace geode::prelude;
@@ -54,9 +55,10 @@ class $modify(ShortsEditPL, PlayLayer) {
 			if (std::filesystem::exists(imagesDir) && std::filesystem::is_directory(imagesDir)) {
 				for (const auto& entry : std::filesystem::directory_iterator(imagesDir)) {
 					if (entry.is_regular_file()) {
-						auto ext = entry.path().extension().string();
+						//auto ext = entry.path().extension().string();
+						auto ext = utils::string::pathToString(entry.path().extension());
 						if (ext == ".png") {
-							fields->customImages.push_back(entry.path().string());
+							fields->customImages.push_back(utils::string::pathToString(entry.path()));
 						}
 					}
 				}
@@ -69,9 +71,10 @@ class $modify(ShortsEditPL, PlayLayer) {
 			if (std::filesystem::exists(soundsDir) && std::filesystem::is_directory(soundsDir)) {
 				for (const auto& entry : std::filesystem::directory_iterator(soundsDir)) {
 					if (entry.is_regular_file()) {
-						auto ext = entry.path().extension().string();
+						//auto ext = entry.path().extension().string();
+						auto ext = utils::string::pathToString(entry.path().extension());
 						if (ext == ".ogg" || ext == ".mp3" || ext == ".wav") {
-							fields->customSounds.push_back(entry.path().string());
+							fields->customSounds.push_back(utils::string::pathToString(entry.path()));
 						}
 					}
 				}
@@ -218,7 +221,6 @@ class $modify(ShortsEditPL, PlayLayer) {
 class $modify(ShortsEditPO, PlayerObject) {
 	void thoseWhoKnow(float dt) {
 
-		//this->unschedule(schedule_selector(ShortsEditPO::thoseWhoKnow));
 		if (!canPlayEffect || pausedByMod) return;
 
 		auto playLayer = PlayLayer::get();
@@ -284,6 +286,8 @@ class $modify(ShortsEditPO, PlayerObject) {
 	bool pushButton(PlayerButton p0) {
 		if (!PlayerObject::pushButton(p0)) return false;
 
+		if (Mod::get()->getSettingValue<bool>("trigger-manually")) return true;
+
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
 		if (pausedByMod || gonnaPause) return true;
@@ -306,6 +310,8 @@ class $modify(ShortsEditPO, PlayerObject) {
 	bool releaseButton(PlayerButton p0) {
 		if (!PlayerObject::releaseButton(p0)) return false;
 		
+		if (Mod::get()->getSettingValue<bool>("trigger-manually")) return true;
+
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
 		if (pausedByMod || gonnaPause) return true;
@@ -333,8 +339,6 @@ class $modify(ShortsEditPO, PlayerObject) {
 class $modify(ShortsEditPauseLayer, PauseLayer) {
 	void okayDude(float dt) {
 		pausedByMod = false;
-		//gonnaPause = false;
-		//canPlayEffect = false;
 
 		FMODAudioEngine::sharedEngine()->stopAllEffects();
 
