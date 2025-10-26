@@ -21,6 +21,17 @@
 			"enable-if": "trigger-manually",
 			"enable-if-description": "Requires Manual Trigger to be enabled!"
 		},
+		"general-title": {
+			"type": "title",
+			"name": "General Settings",
+			"description": "General settings for how the edit effect behaves."
+		},
+		"enable-in-plat": {
+			"type": "bool",
+			"name": "Enable in Platformer",
+			"description": "Enables the effect in platformer levels, ignoring the percentage range settings since platformer levels don't have percentages.",
+			"default": true
+		},
 		"edit-rarity": {
 			"type": "int",
 			"name": "Rarity",
@@ -56,8 +67,8 @@
 				"big-arrows": true,
 				"big-arrow-step": 5
 			},
-			"enable-if": "!trigger-manually",
-			"enable-if-description": "Unavailable for Manual Trigger"
+			"enable-if": "!trigger-manually || !enable-in-plat",
+			"enable-if-description": "Unavailable for Manual Trigger/Platformer"
 		},
 		"only-before": {
 			"type": "int",
@@ -75,8 +86,8 @@
 				"big-arrows": true,
 				"big-arrow-step": 5
 			},
-			"enable-if": "!trigger-manually",
-			"enable-if-description": "Unavailable for Manual Trigger"
+			"enable-if": "!trigger-manually || !enable-in-plat",
+			"enable-if-description": "Unavailable for Manual Trigger/Platformer"
 		},
 		"mod-mode": {
 			"type": "string",
@@ -167,6 +178,40 @@
 			"description": "Enables/Disables including <cp>your Custom Music/SFXs</c> to the list of Sounds that can play when the Edit effect is active. \nTo add custom sounds, create a folder called 'phonk' in the Mod's config folder and place all your custom sounds there! \nTo access the mod's config folder, click the Folder button with a gear on it at the bottom right corner of this Popup. Supported file formats are: \n- .ogg \n- .mp3 \n- .wav \n\nPlease make sure your file names DON'T contain any special characters!!!",
 			"default": false
 		},
+		"image-yoffset": {
+			"type": "float",
+			"name": "Image Y Offset",
+			"description": "Adjusts the vertical position of the Edit Overlay Image. \nPositive values move it up, negative values move it down. Some useful presets are: \n- 0: Centered \n- -120: Bottom Center (Best, default position) \n- 120: Top Center \n- -240/240: Entirely offscreen (Why would u want this) \n<cl>Requires level restart if changed mid-gameplay!</c>",
+			"default": -120.0,
+			"min": -240.0,
+			"max": 240.0,
+			"control": {
+				"input": true,
+				"slider": true,
+				"slider-step": 1.0,
+				"arrows": true,
+				"arrow-step": 1.0,
+				"big-arrows": true,
+				"big-arrow-step": 10.0
+			}
+		},
+		"image-scale": {
+			"type": "float",
+			"name": "Image Scale",
+			"description": "Adjusts the scale of the Edit Overlay Image. I don't think i need to explain how scale works, do i? \n<cl>Requires level restart if changed mid-gameplay!</c>",
+			"default": 1.0,
+			"min": 0.1,
+			"max": 5.0,
+			"control": {
+				"input": true,
+				"slider": true,
+				"slider-step": 0.1,
+				"arrows": true,
+				"arrow-step": 0.1,
+				"big-arrows": true,
+				"big-arrow-step": 0.5
+			}
+		},
 		"input-title": {
 			"type": "title",
 			"name": "Input Settings",
@@ -195,10 +240,16 @@
 			"name": "Misc Settings",
 			"description": "Other settings for other features of the mod."
 		},
-		"enable-wspeed": {
+		"enable-wspeed-texts": {
 			"type": "bool",
-			"name": "Enable W Speed Texts",
+			"name": "Enable W Speed Descriptive Texts",
 			"description": "Toggles On/Off showing a text on screen describing literally anything you're doing, similar to the 'W Speed' edit memes.",
+			"default": true
+		},
+		"enable-wuser-oncomplete": {
+			"type": "bool",
+			"name": "Enable *W {username}* Text on Level Complete",
+			"description": "If enabled, shows a '*W (Your Username)*' text when completing a level, similar to the W Speed edit memes. \nThis is essentially a part of the W Speed feature, but you can toggle it separately if you want to.",
 			"default": true
 		},
 		"button-pos": {
@@ -231,7 +282,7 @@
 	},
 	"id": "saritahhh.youtubeshortsedit",
 	"name": "W Sigma Edit Mode",
-	"version": "v1.0.1",
+	"version": "v1.0.2",
 	"developers": ["Saritahhh", "zMarc"],
 	"description": "Geode's most W sigma mod :skull:",
 	"tags": ["modtober25", "joke", "gameplay"],

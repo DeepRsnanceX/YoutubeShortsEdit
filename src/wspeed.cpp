@@ -167,7 +167,7 @@ class $modify(WSpeedBaseLayer, GJBaseGameLayer) {
     void gameEventTriggered(GJGameEvent p0, int p1, int p2) {
         GJBaseGameLayer::gameEventTriggered(p0, p1, p2);
 
-        if (!Mod::get()->getSettingValue<bool>("enable-wspeed")) return;
+        if (!Mod::get()->getSettingValue<bool>("enable-wspeed-texts")) return;
 
         auto fields = m_fields.self();
         auto winSize = CCDirector::sharedDirector()->getWinSize();
@@ -206,8 +206,6 @@ class $modify(WSpeedPlayLayer, PlayLayer) {
     void setupHasCompleted() {
         PlayLayer::setupHasCompleted();
 
-        if (!Mod::get()->getSettingValue<bool>("enable-wspeed")) return;
-
         auto base = GJBaseGameLayer::get();
         if (!base) return;
 
@@ -220,10 +218,24 @@ class $modify(WSpeedPlayLayer, PlayLayer) {
         m_uiLayer->addChild(baseFields->actionFont, 100);
     }
 
+    void resetLevel() {
+        PlayLayer::resetLevel();
+
+        auto base = GJBaseGameLayer::get();
+        if (!base) return;
+
+        auto baseFields = static_cast<WSpeedBaseLayer*>(base)->m_fields.self();
+
+        if (!baseFields->actionFont) return;
+        baseFields->actionFont->stopAllActions();
+        baseFields->actionFont->setScale(0.7f);
+        baseFields->actionFont->setOpacity(0);
+    }
+
     void levelComplete() {
         PlayLayer::levelComplete();
 
-        if (!Mod::get()->getSettingValue<bool>("enable-wspeed")) return;
+        if (!Mod::get()->getSettingValue<bool>("enable-wuser-oncomplete")) return;
 
         auto base = GJBaseGameLayer::get();
         if (!base) return;

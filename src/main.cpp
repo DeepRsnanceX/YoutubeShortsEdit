@@ -228,6 +228,9 @@ class $modify(ShortsEditPL, PlayLayer) {
 		auto fields = m_fields.self();
 		auto winSize = CCDirector::sharedDirector()->getWinSize();
 
+		float sprY = winSize.height / 2.f;
+		float sprYOffset = Mod::get()->getSettingValue<double>("image-yoffset");
+
 		ShortsEditPL::loadCustomAssets();
 
 		fields->plRenderer = CCRenderTexture::create(winSize.width, winSize.height);
@@ -241,7 +244,8 @@ class $modify(ShortsEditPL, PlayLayer) {
 		m_uiLayer->addChild(fields->grayscreen, 10000);
 
 		auto spr = CCSprite::createWithSpriteFrameName("editImg_1.png"_spr);
-		spr->setPosition({winSize.width / 2.f, 40.f});
+		spr->setPosition({winSize.width / 2.f, sprY + sprYOffset});
+		spr->setScale(Mod::get()->getSettingValue<double>("image-scale"));
 		spr->setVisible(false);
 		spr->setID("no-description-needed"_spr);
 		this->addChild(spr, 10001);
@@ -328,11 +332,28 @@ class $modify(ShortsEditPO, PlayerObject) {
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
+		auto baseLayer = GJBaseGameLayer::get();
+		if (!baseLayer) return true;
+
 		if (pausedByMod || gonnaPause) return true;
 		if (!canPlayEffect) return true;
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Click") return true;
 		if (!isButtonEnabled(p0)) return true;
+
+		// plat fix
+		if (baseLayer->m_isPlatformer) {
+			if (!Mod::get()->getSettingValue<bool>("enable-in-plat")) return true;
+			
+			int chance = getRandInt(0, 100);
+			if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
+				gonnaPause = true;
+				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), 
+					Mod::get()->getSettingValue<double>("action-delay"));
+			}
+			return true;
+		}
 		
+		// superior mode (normal)
 		int percent = playLayer->getCurrentPercentInt();
 		int chance = getRandInt(0, 100);
 		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
@@ -352,19 +373,35 @@ class $modify(ShortsEditPO, PlayerObject) {
 
 		auto playLayer = PlayLayer::get();
 		if (!playLayer) return true;
+		auto baseLayer = GJBaseGameLayer::get();
+		if (!baseLayer) return true;
+
 		if (pausedByMod || gonnaPause) return true;
 		if (!canPlayEffect) return true;
-		if (playLayer->getCurrentPercentInt() == 100) return true;
+		if (!baseLayer->m_isPlatformer && playLayer->getCurrentPercentInt() == 100) return true;
 		if (Mod::get()->getSettingValue<std::string>("mod-mode") != "On Release") return true;
 		if (!isButtonEnabled(p0)) return true;
 
+		// plat fix
+		if (baseLayer->m_isPlatformer) {
+			if (!Mod::get()->getSettingValue<bool>("enable-in-plat")) return true;
+			
+			int chance = getRandInt(0, 100);
+			if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
+				gonnaPause = true;
+				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
+			}
+			return true;
+		}
+
+		// superior mode (normal)
 		int percent = playLayer->getCurrentPercentInt();
-		int threshold = (Mod::get()->getSettingValue<int64_t>("only-after") == 0) ? 1 : Mod::get()->getSettingValue<int64_t>("only-after");
+		int thresholdMin = (Mod::get()->getSettingValue<int64_t>("only-after") == 0) ? 1 : Mod::get()->getSettingValue<int64_t>("only-after");
 		
 		int chance = getRandInt(0, 100);
-
 		if (chance >= Mod::get()->getSettingValue<int64_t>("edit-rarity")) {
-			if (percent >= threshold && percent <= Mod::get()->getSettingValue<int64_t>("only-before")) {
+			if (percent >= thresholdMin && 
+				percent <= Mod::get()->getSettingValue<int64_t>("only-before")) {
 				gonnaPause = true;
 				this->scheduleOnce(schedule_selector(ShortsEditPO::thoseWhoKnow), Mod::get()->getSettingValue<double>("action-delay"));
 			}
