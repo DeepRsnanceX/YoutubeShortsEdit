@@ -29,13 +29,13 @@
 		"enable-in-plat": {
 			"type": "bool",
 			"name": "Enable in Platformer",
-			"description": "Enables the effect in platformer levels, ignoring the percentage range settings since platformer levels don't have percentages.",
+			"description": "Enables the effect in platformer levels, ignoring the percentage range settings since platformer levels don't have percentages. \n<cr>Manual Trigger will still work as intended in platformer levels regardless of this setting!</c>",
 			"default": true
 		},
 		"edit-rarity": {
 			"type": "int",
-			"name": "Rarity",
-			"description": "How rare the edit effect is on every click. AKA, the chance of it appearing.\n- Lower rarity: Higher chance of it appearing.\n- Higher rarity: Lower chance of it appearing.",
+			"name": "Rarity (READ INFO!!!)",
+			"description": "How rare the edit effect is on every click. AKA, the chance of it appearing.\n- Lower rarity: Higher chance of it appearing.\n- Higher rarity: Lower chance of it appearing. \n\nThis is <cr>NOT</c> a percentage chance! Setting this to 0 means it will always appear, setting it to 99 means it will appear 1% of the time, setting it to 50 means it will appear 50% of the time, etc. \n\nBasically, u can calculate the ACTUAL % chance by doing: [100 - RARITY]%. \n\n<cp>Please set accordingly!</c>",
 			"default": 50,
 			"min": 0,
 			"max": 100,
@@ -54,7 +54,7 @@
 		"only-after": {
 			"type": "int",
 			"name": "Only After %",
-			"description": "Controls after what percentage can the edit start happening. \n<cy>TIP:</c> If you want the effect to only happen at ur last click/at the end of the level, set this to a higher value like 98% and set rarity to 0.",
+			"description": "Controls after what percentage can the edit start happening. \n<cy>TIP:</c> If you want the effect to only happen at ur last click/at the end of the level, set this to a higher value like 98% and set rarity to 0. \n<cr>This setting is completely ignored if playing on a Platformer level!</c>",
 			"default": 0,
 			"min": 0,
 			"max": 99,
@@ -67,13 +67,13 @@
 				"big-arrows": true,
 				"big-arrow-step": 5
 			},
-			"enable-if": "!trigger-manually || !enable-in-plat",
-			"enable-if-description": "Unavailable for Manual Trigger/Platformer"
+			"enable-if": "!trigger-manually",
+			"enable-if-description": "Unavailable for Manual Trigger"
 		},
 		"only-before": {
 			"type": "int",
 			"name": "Only Before %",
-			"description": "Controls before what percentage can the edit start happening. This setting along with the Only After % setting allow you to choose the percentage range in which the edit can happen.",
+			"description": "Controls before what percentage can the edit start happening. This setting along with the Only After % setting allow you to choose the percentage range in which the edit can happen. \n<cr>This setting is completely ignored if playing on a Platformer level!</c>",
 			"default": 100,
 			"min": 1,
 			"max": 100,
@@ -86,8 +86,8 @@
 				"big-arrows": true,
 				"big-arrow-step": 5
 			},
-			"enable-if": "!trigger-manually || !enable-in-plat",
-			"enable-if-description": "Unavailable for Manual Trigger/Platformer"
+			"enable-if": "!trigger-manually",
+			"enable-if-description": "Unavailable for Manual Trigger"
 		},
 		"mod-mode": {
 			"type": "string",
