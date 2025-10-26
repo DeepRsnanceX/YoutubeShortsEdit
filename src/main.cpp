@@ -451,8 +451,7 @@ class $modify(ShortsEditGJBGL, GJBaseGameLayer) {
 		if (!Mod::get()->getSettingValue<bool>("trigger-manually")) return;
 		if (pausedByMod || gonnaPause || !canPlayEffect) return;
 		
-		int percent = playLayer->getCurrentPercentInt();
-		if (percent == 100) return;
+		if (!m_isPlatformer && playLayer->getCurrentPercentInt() == 100) return;
 		
 		auto player = this->m_player1;
 		if (!player) return;
@@ -468,8 +467,7 @@ class $modify(ShortsEditGJBGL, GJBaseGameLayer) {
 		if (!Mod::get()->getSettingValue<bool>("trigger-manually")) return;
 		if (pausedByMod || gonnaPause || !canPlayEffect) return;
 		
-		int percent = playLayer->getCurrentPercentInt();
-		if (percent == 100) return;
+		if (!m_isPlatformer && playLayer->getCurrentPercentInt() == 100) return;
 		
 		auto player = this->m_player1;
 		if (!player) return;
